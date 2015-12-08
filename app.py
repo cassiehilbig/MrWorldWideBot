@@ -1,13 +1,24 @@
 from importlib import import_module
 import os
 import sys
+import json
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '.'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'xlib'))
 
-from flask import Flask
+from flask import Flask, request
 
 app = Flask(__name__)
+
+
+@app.before_request
+def parse_data():
+    if request.method in ('POST', 'PATCH', 'PUT', 'DELETE'):
+        try:
+            request.params = json.loads(request.get_data())
+        except ValueError:
+            request.params = {}
+
 
 module = os.environ.get('CURRENT_MODULE_ID', 'default')
 
