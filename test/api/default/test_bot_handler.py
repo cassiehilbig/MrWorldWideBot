@@ -121,4 +121,6 @@ class IncomingMessageTaskTest(TestBase):
             'from': 'foo',
             'body': 'bar'
         }
-        self.api_call('post', '/tasks/incoming', data=message, headers=self.headers, status=200)
+        self.api_call('post', '/tasks/incoming', data={
+            'message': message
+        }, headers=self.headers, status=200)
