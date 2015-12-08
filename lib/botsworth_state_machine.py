@@ -1,0 +1,27 @@
+from state_machine import StateMachine
+from states import DefaultState, login_state_interceptor, LoginWithKikBeginState, LoginWithKikConfirmationState, \
+    link_state_interceptor, LinkWithKikBeginState, LinkWithKikConfirmationState, MenuState, UpdateDisplayNameState, \
+    SelectBotUpdateDisplayNameState, UpdateDisplayNameConfirmationState, UpdateProfilePictureState, \
+    SelectBotUpdateProfilePictureState, UpdateProfilePictureConfirmationState, ChooseUsernameState,\
+    ConfirmUsernameState, MoreSetupState
+
+state_machine = StateMachine(DefaultState)
+
+state_machine.register_global_interceptor(link_state_interceptor)
+state_machine.register_global_interceptor(login_state_interceptor)
+state_machine.register_state(LoginWithKikBeginState)
+state_machine.register_state(LoginWithKikConfirmationState)
+state_machine.register_state(LinkWithKikBeginState)
+state_machine.register_state(LinkWithKikConfirmationState)
+state_machine.register_state(MenuState)
+
+state_machine.register_state(ChooseUsernameState)
+state_machine.register_state(ConfirmUsernameState)
+state_machine.register_state(MoreSetupState)
+
+state_machine.register_state(UpdateDisplayNameState)
+state_machine.register_state(SelectBotUpdateDisplayNameState)
+state_machine.register_state(UpdateDisplayNameConfirmationState)
+state_machine.register_state(UpdateProfilePictureState)
+state_machine.register_state(SelectBotUpdateProfilePictureState)
+state_machine.register_state(UpdateProfilePictureConfirmationState)

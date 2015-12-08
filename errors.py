@@ -1,0 +1,7 @@
+BAD_REQUEST = 'BadRequest'
+NOT_FOUND = 'NotFound'
+INVALID_PARAMETER = 'InvalidParameters'
+CONFLICT = 'Conflict'
+INTERNAL_ERROR = 'InternalError'
+TOO_MANY_REQUESTS = 'TooManyRequests'
+UNAUTHORIZED = 'Unauthorized'

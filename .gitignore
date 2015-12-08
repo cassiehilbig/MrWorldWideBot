@@ -1,0 +1,7 @@
+.DS_Store
+*.pyc
+.idea
+npm-debug.log
+secrets.py
+.coverage
+.integration_test_*

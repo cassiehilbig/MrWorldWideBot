@@ -1,0 +1,8 @@
+webtest==2.0.18
+flake8==2.3.0
+pillow==2.7.0
+pycrypto==2.6.1
+coverage==4.0
+freezegun==0.3.3
+mock==1.0.1
+multitest==0.1.2
