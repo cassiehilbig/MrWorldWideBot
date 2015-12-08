@@ -1,24 +1,23 @@
 from functools import wraps
 
-from errors import INVALID_PARAMETER
 from lib import logging
+from flask import request
 
 
 def require_params(*params):
     def wrap(fn):
         @wraps(fn)
-        def wrapper(self, *args, **kwargs):
-            missing_params = [param for param in params if param not in self.params]
+        def wrapper(*args, **kwargs):
+            missing_params = [param for param in params if param not in request.params]
             if len(missing_params) > 0:
                 message = 'Missing params: {}'.format(', '.join(missing_params))
                 # Only respond with an error if this isn't an App Engine task. Tasks will attempt to retry in the event
                 # they fail, but this failure is not recoverable, so respond successfully after logging.
-                if 'X-AppEngine-TaskName' not in self.request.headers:
+                if 'X-AppEngine-TaskName' not in request.headers:
                     logging.info(message)
-                    self.respond_error(400, INVALID_PARAMETER, message)
+                    return 'Invalid parameter', 400
                 else:
-                    logging.error(message)
-                return
+                    return ''
 
             return fn(self, *args, **kwargs)
 
@@ -34,18 +33,18 @@ def log_error_after_task_failures(threshold):
     """
 
     def wrap(func):
-        def wrapper(self, *args, **kwargs):
+        def wrapper(*args, **kwargs):
             result = None
             exception = False
 
             try:
-                result = func(self, *args, **kwargs)
+                result, status_code = func(*args, **kwargs)
             except Exception:
                 exception = True
 
             # A task can fail with an exception or an error status.
-            if exception or not (200 <= self.response.status_int <= 299):
-                failure_count = int(self.request.headers.get('X-AppEngine-TaskExecutionCount', 0)) + 1
+            if exception or not (200 <= status_code <= 299):
+                failure_count = int(request.headers.get('X-AppEngine-TaskExecutionCount', 0)) + 1
 
                 if failure_count >= threshold:
                     logging.error('Task has failed {} time(s)'.format(failure_count))

@@ -4,6 +4,7 @@ from google.appengine.api import taskqueue
 
 from config import Config
 from lib.utils import generate_signature, partition
+from lib.decorators import require_params
 from secrets import BOT_API_KEY
 from app import app
 from flask import request
@@ -30,5 +31,6 @@ def receive():
 
 
 @app.route('/tasks/incoming', methods=['POST'])
+@require_params('message')
 def incoming():
     return 'yolo'

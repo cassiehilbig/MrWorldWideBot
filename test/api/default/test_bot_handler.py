@@ -5,6 +5,7 @@ from test.test_base import TestBase
 from lib.utils import generate_signature
 from secrets import BOT_API_KEY
 from config import Config
+from const import MessageType
 
 
 class BotHandlerTest(TestBase):
@@ -103,5 +104,21 @@ class BotHandlerTest(TestBase):
 
 class IncomingMessageTaskTest(TestBase):
 
-    # TODO
-    pass
+    def setUp(self):
+        super(IncomingMessageTaskTest, self).setUp()
+
+        self.headers = {'X-AppEngine-TaskName': 'foo'}
+
+    def test_no_message_param_loud_failure_if_not_task(self):
+        self.api_call('post', '/tasks/incoming', status=400)
+
+    def test_no_message_param_silent_failure_if_task(self):
+        self.api_call('post', '/tasks/incoming', headers=self.headers, status=200)
+
+    def test_success(self):
+        message = {
+            'type': MessageType.TEXT,
+            'from': 'foo',
+            'body': 'bar'
+        }
+        self.api_call('post', '/tasks/incoming', data=message, headers=self.headers, status=200)
