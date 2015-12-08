@@ -14,16 +14,11 @@ def receive():
     if request.headers.get('X-Kik-Signature') != generate_signature(BOT_API_KEY, request.get_data()):
         return 'API signature incorrect', 403
 
-    try:
-        data = json.loads(request.get_data())
-
-        if 'messages' not in data or not isinstance(data['messages'], list):
-            raise ValueError
-    except ValueError:
+    if not isinstance(request.params.get('messages'), list):
         return 'Invalid request body', 400
 
     tasks = []
-    for message in data['messages']:
+    for message in request.params['messages']:
         tasks.append(taskqueue.Task(
             url='/tasks/incoming',
             payload=json.dumps({'message': message})))
