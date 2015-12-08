@@ -1,22 +1,23 @@
 import json
 
 from google.appengine.api import taskqueue
+from flask import request
 
 from config import Config
-from lib.utils import generate_signature, partition
+from lib.utils import generate_signature, partition, error_response
 from lib.decorators import require_params
 from secrets import BOT_API_KEY
 from app import app
-from flask import request
+from errors import INVALID_PARAMETER, UNAUTHORIZED
 
 
 @app.route('/receive', methods=['POST'])
 def receive():
     if request.headers.get('X-Kik-Signature') != generate_signature(BOT_API_KEY, request.get_data()):
-        return 'API signature incorrect', 403
+        return error_response(403, UNAUTHORIZED, 'API signature incorrect')
 
     if not isinstance(request.params.get('messages'), list):
-        return 'Invalid request body', 400
+        return error_response(400, INVALID_PARAMETER, 'Invalid request body')
 
     tasks = []
     for message in request.params['messages']:
@@ -33,4 +34,4 @@ def receive():
 @app.route('/tasks/incoming', methods=['POST'])
 @require_params('message')
 def incoming():
-    return 'yolo'
+    return 'yolo', 200

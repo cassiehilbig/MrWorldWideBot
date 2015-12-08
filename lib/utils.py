@@ -2,6 +2,7 @@ import base64
 import hashlib
 import hmac
 import os
+import json
 
 from google.appengine.api import users
 import webapp2
@@ -43,3 +44,10 @@ def partition(lst, size):
     :return: a list of sub-lists
     """
     return [lst[i:i + size] for i in range(0, len(lst), size)]
+
+
+def error_response(status_code, error, message=None):
+    return json.dumps({
+        'error': error,
+        'message': message
+    }), status_code

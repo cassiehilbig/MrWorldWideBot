@@ -19,7 +19,7 @@ def require_params(*params):
                 else:
                     return ''
 
-            return fn(self, *args, **kwargs)
+            return fn(*args, **kwargs)
 
         return wrapper
 
