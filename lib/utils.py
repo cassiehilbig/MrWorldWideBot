@@ -4,21 +4,9 @@ import hmac
 import os
 import json
 
-from google.appengine.api import users
-import webapp2
-
 
 def is_debug():
     return 'Development' in os.environ.get('SERVER_SOFTWARE', 'Production')
-
-
-def is_admin(*args, **kwargs):
-    if len(args) > 0 and isinstance(args[0], webapp2.RequestHandler):
-        if args[0].request.headers.get('X-AppEngine-Cron'):
-            return True
-        elif args[0].request.headers.get('X-AppEngine-QueueName'):
-            return True
-    return users.is_current_user_admin()
 
 
 def generate_signature(api_token, req_body):
