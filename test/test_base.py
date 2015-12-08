@@ -68,6 +68,9 @@ class TestBase(TestCase):
 
     def api_call(self, method, resource, data=None, status=200, headers={}, upload_files=None, https=True,
                  cookies=None):
+        if type(data) in (dict, list) and (method in ['post', 'put', 'patch']):
+            data = json.dumps(data)
+
         func = getattr(self.app, method.lower())
         result = func(resource, data=data, headers=headers)
 

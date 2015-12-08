@@ -1,5 +1,4 @@
 import mock
-import json
 
 from test.test_base import TestBase
 from errors import INVALID_PARAMETER
@@ -88,7 +87,7 @@ class DecoratorsTest(TestBase):
         self.assertEqual(logging.call_args_list[0][0][0], 'Task has failed 4 time(s)')
 
     def test_require_params_success(self):
-        body = json.dumps({param: 'Some value' for param in REQUIRED_PARAMS})
+        body = {param: 'Some value' for param in REQUIRED_PARAMS}
         self.api_call('post', '/test/require_params', data=body, status=200)
 
     def test_require_params_failure_missing_all(self):
@@ -102,7 +101,7 @@ class DecoratorsTest(TestBase):
     def test_require_params_failure_missing_one(self):
         for param in REQUIRED_PARAMS:
             sent_params = [p for p in REQUIRED_PARAMS if p is not param]
-            body = json.dumps({param: 'Some value' for param in sent_params})
+            body = {param: 'Some value' for param in sent_params}
             j = self.api_call('post', '/test/require_params', data=body, status=400).json
             self.assertEqual(j, {
                 'error': INVALID_PARAMETER,
