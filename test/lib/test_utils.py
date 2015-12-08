@@ -1,6 +1,7 @@
 import mock
+import json
 
-from lib.utils import server_url, partition
+from lib.utils import server_url, partition, error_response
 from test.test_base import TestBase
 
 
@@ -20,3 +21,9 @@ class UtilsTest(TestBase):
 
     def test_partition_list_length_divisble_by_size(self):
         self.assertListEqual(partition([1, 2, 3, 4, 5, 6], 2), [[1, 2], [3, 4], [5, 6]])
+
+    def test_error_response_with_message(self):
+        self.assertEqual(error_response(123, 'code', 'msg'), (json.dumps({'error': 'code', 'message': 'msg'}), 123))
+
+    def test_error_response_no_message(self):
+        self.assertEqual(error_response(123, 'code'), (json.dumps({'error': 'code', 'message': None}), 123))
