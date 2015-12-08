@@ -40,8 +40,6 @@ class TestBase(TestCase):
         self._orig_server_software = os.environ.get("SERVER_SOFTWARE", None)
 
     def tearDown(self):
-        return
-        os.environ['SERVER_SOFTWARE'] = self._orig_server_software
         self.testbed.deactivate()
         self.set_current_user(None)
 
@@ -69,7 +67,10 @@ class TestBase(TestCase):
 
     def api_call(self, method, resource, data=None, status=200, headers={}, upload_files=None, https=True,
                  cookies=None):
-        return
+        func = getattr(self.app, method.lower())
+        result = func(resource, data=data, headers=headers)
+
+        self.assertEqual(result.status_code, status)
 
     def set_memcache_gettime(self, func):
         self.testbed.get_stub(MEMCACHE_SERVICE_NAME).set_gettime(func)

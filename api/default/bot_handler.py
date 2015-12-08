@@ -17,7 +17,7 @@ def receive():
     try:
         data = json.loads(request.get_data())
 
-        if 'messages' not in data:
+        if 'messages' not in data or not isinstance(data['messages'], list):
             raise ValueError
     except ValueError:
         return 'Invalid request body', 400
