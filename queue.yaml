@@ -1,12 +1,4 @@
 queue:
-- name: purge
-  target: default
-  rate: 50/s
-  bucket_size: 1
-  max_concurrent_requests: 1
-  retry_parameters:
-    task_retry_limit: 5
-
 - name: backup
   target: default
   rate: 500/s

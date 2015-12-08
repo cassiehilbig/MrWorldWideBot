@@ -1,4 +1,3 @@
-# Botsworth
+# Bot starter kit
 
-This is Botsworth. 
-He'll help you take care of your bots.
+Use this repository to start building a bot.
