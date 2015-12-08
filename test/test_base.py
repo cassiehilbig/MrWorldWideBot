@@ -4,15 +4,11 @@ import os
 
 from google.appengine.datastore import datastore_stub_util
 from google.appengine.ext import ndb
-from google.appengine.ext.testbed import TASKQUEUE_SERVICE_NAME, URLFETCH_SERVICE_NAME, MEMCACHE_SERVICE_NAME
-from webtest import TestApp
+from google.appengine.ext.testbed import TASKQUEUE_SERVICE_NAME, MEMCACHE_SERVICE_NAME
+# from webtest import TestApp
 
-import app
+from app import app
 from test.testbed import Testbed
-
-apps = {
-    'default': app.create('default')
-}
 
 
 class TestBase(TestCase):
@@ -22,8 +18,11 @@ class TestBase(TestCase):
 
     def setUp(self):
         self.policy = datastore_stub_util.PseudoRandomHRConsistencyPolicy(probability=1.0)
-        self.app = apps[self.MODULE]
-        self.testapp = TestApp(self.app)
+
+        self.app = app.test_client()
+        self.app.testing = True
+
+        # self.testapp = TestApp(self.app)
         self.testbed = Testbed()
         self.testbed.activate()
         self.testbed.init_app_identity_stub()
@@ -41,6 +40,7 @@ class TestBase(TestCase):
         self._orig_server_software = os.environ.get("SERVER_SOFTWARE", None)
 
     def tearDown(self):
+        return
         os.environ['SERVER_SOFTWARE'] = self._orig_server_software
         self.testbed.deactivate()
         self.set_current_user(None)
@@ -69,52 +69,7 @@ class TestBase(TestCase):
 
     def api_call(self, method, resource, data=None, status=200, headers={}, upload_files=None, https=True,
                  cookies=None):
-        method = method.lower()
-        is_json = False
-
-        if type(data) in (dict, list) and (method in ['post', 'put', 'patch']):
-            is_json = True
-
-            # TODO: data as query param for other requests
-
-        if cookies:
-            for cookie in cookies:
-                self.testapp.set_cookie(cookie['name'], cookie['value'])
-
-        if is_json:
-            func = getattr(self.testapp, method.lower() + '_json')
-        else:
-            func = getattr(self.testapp, method.lower())
-
-        extra_environ = {
-            'wsgi.url_scheme': 'https' if https else 'http'
-        }
-
-        kwargs = {
-            'status': status,
-            'headers': headers,
-            'extra_environ': extra_environ
-        }
-
-        if data:
-            kwargs['params'] = data
-
-        if upload_files:
-            kwargs['upload_files'] = upload_files
-
-        response = func(resource, **kwargs)
-        # Reset saved cookies
-        self.testapp.reset()
-        return response
-
-    def set_urlfetch_response(self, status=200, headers={}, content=''):
-        self.testbed.get_stub(URLFETCH_SERVICE_NAME).set_response(status, headers, content)
-
-    def set_urlfetch_request_callback(self, callback):
-        self.testbed.get_stub(URLFETCH_SERVICE_NAME).set_request_callback(callback)
-
-    def route_urlfetch_response(self, method, url, status=200, headers={}, content=''):
-        self.testbed.get_stub(URLFETCH_SERVICE_NAME).route_response(method, url, status, headers, content)
+        return
 
     def set_memcache_gettime(self, func):
         self.testbed.get_stub(MEMCACHE_SERVICE_NAME).set_gettime(func)

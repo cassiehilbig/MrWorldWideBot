@@ -1,10 +1,9 @@
 from google.appengine.ext import ndb
 
 from base_model import BaseModel
-from lib.admin_requests_mixin import AdminRequestsMixin
 
 
-class BotUser(BaseModel, AdminRequestsMixin):
+class BotUser(BaseModel):
     states = ndb.StringProperty(indexed=False, repeated=True)
     state_data = ndb.JsonProperty(indexed=False)
 
@@ -16,14 +15,6 @@ class BotUser(BaseModel, AdminRequestsMixin):
     @property
     def id(self):
         return self.key.id()
-
-    def bots(self):
-        return [admin_bot['id'] for admin_bot in self.get_admin()['bots']]
-
-    def get_admin(self):
-        if self._admin_cache is None:
-            self._admin_cache = self._get_admin(self.id)
-        return self._admin_cache
 
     def get_state_data(self, state):
         if self.state_data.get(state) is None:

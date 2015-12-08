@@ -1,5 +1,3 @@
-import mock
-
 from test.test_base import TestBase
 from model import BotUser
 
@@ -14,28 +12,6 @@ class TestBotUser(TestBase):
         user = BotUser(id='abc', states=['a-state'])
         self.assertEqual(user.id, 'abc')
         self.assertEqual(user.states, ['a-state'])
-
-    @mock.patch(
-        'lib.admin_requests_mixin.AdminRequestsMixin._get_admin',
-        return_value={'bots': [{'id': 'a'}, {'id': 'b'}]}
-    )
-    def test_get_admin(self, get_admin):
-        user = BotUser(id='abc')
-        self.assertEqual(user.get_admin(), {'bots': [{'id': 'a'}, {'id': 'b'}]})
-        self.assertEqual(get_admin.call_count, 1)
-        self.assertEqual(user.get_admin(), {'bots': [{'id': 'a'}, {'id': 'b'}]})
-        self.assertEqual(get_admin.call_count, 1)
-
-    @mock.patch(
-        'lib.admin_requests_mixin.AdminRequestsMixin._get_admin',
-        return_value={'bots': [{'id': 'a'}, {'id': 'b'}]}
-    )
-    def test_get_bots(self, get_admin):
-        user = BotUser(id='abc')
-        self.assertEqual(user.bots(), ['a', 'b'])
-        self.assertEqual(get_admin.call_count, 1)
-        self.assertEqual(user.bots(), ['a', 'b'])
-        self.assertEqual(get_admin.call_count, 1)
 
     def test_get_state_data_default(self):
         user = BotUser()
