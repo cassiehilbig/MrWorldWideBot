@@ -15,9 +15,9 @@ app = Flask(__name__)
 def parse_data():
     if request.method in ('POST', 'PATCH', 'PUT', 'DELETE'):
         try:
-            request.params = json.loads(request.get_data())
+            request.args = json.loads(request.get_data())
         except ValueError:
-            request.params = {}
+            pass
 
 
 module = os.environ.get('CURRENT_MODULE_ID', 'default')

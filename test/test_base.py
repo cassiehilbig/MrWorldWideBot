@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from unittest import TestCase
 import os
+import json
 
 from google.appengine.datastore import datastore_stub_util
 from google.appengine.ext import ndb
@@ -71,6 +72,13 @@ class TestBase(TestCase):
         result = func(resource, data=data, headers=headers)
 
         self.assertEqual(result.status_code, status)
+
+        try:
+            result.json = json.loads(result.data)
+        except ValueError:
+            pass
+
+        return result
 
     def set_memcache_gettime(self, func):
         self.testbed.get_stub(MEMCACHE_SERVICE_NAME).set_gettime(func)
