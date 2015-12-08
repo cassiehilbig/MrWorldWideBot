@@ -1,15 +1,5 @@
-from lib.base_handler import BaseHandler
+from app import app
 
-
-class WarmupHandler(BaseHandler):
-    """
-    Warmup
-    """
-
-    def get(self):
-        self.respond({})
-
-
-routes = [
-    (r'/_ah/warmup', WarmupHandler)
-]
+@app.route('/_ah/warmup')
+def warmup():
+    return ''

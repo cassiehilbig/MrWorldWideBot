@@ -3,20 +3,15 @@ import json
 from google.appengine.api import taskqueue
 
 from config import Config
-from lib.base_handler import BaseHandler
-from lib.decorators import require_params, log_error_after_task_failures
-from lib.kik_bot import send_messages
-from lib.botsworth_state_machine import state_machine
 from lib.utils import generate_signature, partition
-from model import BotUser
-from secrets import BOTSWORTH_API_KEY
+from secrets import BOT_API_KEY
 from app import app
 from flask import request
 
 
 @app.route('/receive', methods=['POST'])
 def receive():
-    if request.headers.get('X-Kik-Signature') != generate_signature(BOTSWORTH_API_KEY, request.get_data()):
+    if request.headers.get('X-Kik-Signature') != generate_signature(BOT_API_KEY, request.get_data()):
         return 'API signature incorrect', 403
 
     try:
