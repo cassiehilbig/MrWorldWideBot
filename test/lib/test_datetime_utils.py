@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from lib.datetime_utils import datetime_to_utc_timestamp, datetime_to_utc_timestamp_millis, datetime_to_csv_format
-from lib.timezones import Eastern
 from test.test_base import TestBase
 
 
@@ -15,11 +14,6 @@ class DatetimeUtilsTest(TestBase):
         dt = datetime(2004, 2, 29)
         self.assertEqual(datetime_to_utc_timestamp(dt), 1078012800)
         self.assertEqual(datetime_to_utc_timestamp_millis(dt), 1078012800000)
-
-    def test_time_zone(self):
-        dt = datetime(2014, 6, 26, tzinfo=Eastern)
-        self.assertEqual(datetime_to_utc_timestamp(dt), 1403755200)
-        self.assertEqual(datetime_to_utc_timestamp_millis(dt), 1403755200000)
 
     def test_future_with_millis(self):
         dt = datetime(2020, 5, 30, 1, 2, 34, 567000)
