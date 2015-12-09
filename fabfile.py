@@ -4,9 +4,9 @@ import re
 from fabric.api import hide, lcd, local, runs_once, shell_env
 
 
-ALL_ARGS = frozenset(['BOT_API_TOKEN', 'CI_COMMIT_ID', 'GOOGLE_CLOUD_KEY', 'GOOGLE_DEVELOPER_KEY'])
+ALL_ARGS = frozenset(['BOT_API_KEY', 'CI_COMMIT_ID', 'GOOGLE_CLOUD_KEY', 'GOOGLE_DEVELOPER_KEY'])
 # These are the same for prod and staging.
-COMMON_ARGS = frozenset(['BOT_API_TOKEN', 'CI_COMMIT_ID'])
+COMMON_ARGS = frozenset(['BOT_API_KEY', 'CI_COMMIT_ID'])
 # These are different for prod and staging. Staging is prepended with "STAGING_"
 APPLICATION_ARGS = ALL_ARGS.difference(COMMON_ARGS)
 
@@ -66,11 +66,11 @@ def debug(runtime='local'):
 if environ.get('CI'):
     def secrets():
         """Validates and sets backend secrets"""
-        with open(app_config['BACKEND_CONFIG'], 'r+') as backend_config:
+        with open(app_config['CONFIG'], 'r+') as backend_config:
             text = backend_config.read()
             for arg in BACKEND_ARGS:
                 if arg not in text:
-                    raise Exception('{} not found in {}'.format(arg, app_config['BACKEND_CONFIG']))
+                    raise Exception('{} not found in {}'.format(arg, app_config['CONFIG']))
                 text = re.sub(r'{0} = \'.*\''.format(arg),
                               '{0} = \'{1}\''.format(arg, app_config[arg]),
                               text)
