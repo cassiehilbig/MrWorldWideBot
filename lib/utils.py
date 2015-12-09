@@ -13,10 +13,6 @@ def generate_signature(api_token, req_body):
     return base64.b16encode(hmac.new(str(api_token), req_body, hashlib.sha1).digest())
 
 
-def messaging_url():
-    return 'https://engine.apikik.com/api/v1/message'
-
-
 def server_url():
     scheme = 'https' if not is_debug() else 'http'
     hostname = 'localhost:8080' if is_debug() else 'bot-dashboard.appspot.com'

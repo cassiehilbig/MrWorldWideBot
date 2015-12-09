@@ -46,9 +46,8 @@ class BaseModel(ndb.Model):
             props['id'] = self.key.id()
         for key, prop in self._properties.iteritems():
             if key not in exclude and (include is None or key in include):
-                if hasattr(self, key):
-                    value = self._value_to_dict(getattr(self, key), fetch_keys)
-                    props[key] = value
+                value = self._value_to_dict(getattr(self, key), fetch_keys)
+                props[key] = value
         return props
 
     def _value_to_dict(self, value, fetch_keys):

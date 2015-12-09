@@ -82,6 +82,16 @@ class BaseModelTest(TestBase):
         self.assertEqual(tm_dict['text1'], 'abc')
         self.assertNotIn('text2', tm_dict)
 
+    def test_to_dict_model_exclude(self):
+        tm = TestIncludeModel(text1='abc', text2='def')
+        tm.put()
+        tm = tm.key.get()
+
+        tm_dict = tm.to_dict(exclude=['text2'])
+
+        self.assertEqual(tm_dict['text1'], 'abc')
+        self.assertNotIn('text2', tm_dict)
+
     def test_to_dict_fetch_keys(self):
         tm = TestModel(text='abc', integer=123, multi_text=['a', 'b', '3'])
         tm.put()
