@@ -24,6 +24,12 @@ class ChooseColorState(KeywordState):
     def type():
         return 'choose-color'
 
+    def __init__(self, user):
+        super(ChooseColorState, self).__init__(user)
+
+        # We don't want to have too many functions, so let's add suggested responses dynamically
+        self.suggested_responses = COLORS + self.suggested_responses
+
     @keyword_response('Cancel', 'back')
     def handle_cancel(self, message):
         return PopTransition([make_text_message(self.user.id, ChooseFavoriteColorStrings.CANCEL_MESSAGE)])

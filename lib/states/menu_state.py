@@ -1,4 +1,4 @@
-from lib.state_machine import KeywordState, keyword_response, LambdaTransition
+from lib.state_machine import KeywordState, keyword_response, LambdaTransition, StackTransition
 from lib.kik_bot import make_text_message
 
 
@@ -17,7 +17,7 @@ class MenuState(KeywordState):
 
     @keyword_response('Color', 'colour')
     def handle_color(self, message):
-        return LambdaTransition([make_text_message(MenuStateStrings.COLOR_MESSAGE, self.user.id)])
+        return StackTransition([make_text_message(MenuStateStrings.COLOR_MESSAGE, self.user.id)], 'choose-color')
 
     @keyword_response('Do nothing', 'nothing')
     def handle_nothing(self, message):
