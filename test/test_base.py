@@ -64,7 +64,7 @@ class TestBase(TestCase):
                 retries.append(task)
 
         for task in retries:
-            self.testapp.post(task.url, params=task.payload, headers=task.headers)
+            self.app.post(task.url, data=task.payload, headers=task.headers)
 
     def api_call(self, method, resource, data=None, status=200, headers={}, upload_files=None, https=True,
                  cookies=None):

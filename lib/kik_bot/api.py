@@ -1,7 +1,6 @@
 import json
 from base64 import b64encode
 
-import requests
 from google.appengine.api import urlfetch
 
 KIK_BOT_SERVER_FORMAT = 'https://engine.apikik.com/api/v1/{}'
@@ -65,13 +64,13 @@ def send_messages(messages, bot_name, bot_api_key):
     :return: The response from engine.apikik.com.
     :raises SendMessageError: if there is an error sending the messages.
     """
-    response = requests.post(
+    response = urlfetch.fetch(
         KIK_BOT_MESSAGING_URL,
-        auth=(bot_name, bot_api_key),
-        timeout=60,
-        json={'messages': messages}
+        method=urlfetch.POST,
+        payload=json.dumps({'messages': messages}),
+        headers=_generate_headers(bot_name, bot_api_key),
+        deadline=60
     )
-
     if response.status_code != 200:
         raise SendMessagesError('Failed to send messages to engine.apikik.com. ({}) - {}'.format(
             response.status_code, response.content

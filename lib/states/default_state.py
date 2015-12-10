@@ -1,25 +1,21 @@
-from lib.state_machine import KeywordState, keyword_response, LambdaTransition
-from lib.kik_bot import make_text_message
+from lib.state_machine import State, StackTransition
+from lib.kik_bot import make_text_message, get_user_profile
+from config import Config
+from secrets import BOT_API_KEY
 
 
 class DefaultStateStrings(object):
-    COLOR_MESSAGE = 'Okay, so what is your favorite color?'
-    CONFUSED_MESSAGE = 'Sorry what would you like to do?'
-    RESUME_MESSAGE = 'What would you like to do now?'
+    WELCOME_MESSAGE = 'Welcome, {first_name}!'
 
 
-class DefaultState(KeywordState):
+class DefaultState(State):
 
     @staticmethod
     def type():
         return 'default'
 
-    @keyword_response('Color', 'colour')
-    def handle_color(self, message):
-        return LambdaTransition([make_text_message(self.user.id, DefaultStateStrings.COLOR_MESSAGE)])
+    def on_message(self, message):
+        profile = get_user_profile(message['from'], bot_name=Config.BOT_USERNAME, bot_api_key=BOT_API_KEY)
+        m = DefaultStateStrings.WELCOME_MESSAGE.format(first_name=profile['firstName'])
+        return StackTransition([make_text_message(m)], 'menu')
 
-    def handle_unmatched(self, message):
-        return LambdaTransition([make_text_message(self.user.id, DefaultStateStrings.CONFUSED_MESSAGE)])
-
-    def on_resume(self):
-        return LambdaTransition([make_text_message(self.user.id, DefaultStateStrings.RESUME_MESSAGE)])
