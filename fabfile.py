@@ -75,7 +75,7 @@ if environ.get('CI'):
                               '{0} = \'{1}\''.format(arg, app_config[arg]),
                               text)
             _overwrite(backend_config, text)
-        local('flake8 {BACKEND_CONFIG} --max-line-length=1000'.format(**app_config))
+        local('flake8 {CONFIG} --max-line-length=1000'.format(**app_config))
 
     def production():
         """Configures deploy for production"""
