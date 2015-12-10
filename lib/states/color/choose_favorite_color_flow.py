@@ -1,3 +1,9 @@
+from lib.state_machine import KeywordState, keyword_response, ConfirmationState, Transition, PopTransition,\
+    LambdaTransition
+from lib.kik_bot import make_text_message
+from const import MessageType
+
+
 COLORS = ['White', 'Blue', 'Red', 'Purple', 'Orange']
 
 
@@ -32,7 +38,7 @@ class ChooseColorState(KeywordState):
         if pick not in lower_colors:
             return LambdaTransition([make_text_message(self.user.id, ChooseFavoriteColorStrings.UNKNOWN_COLOR)])
 
-        user.get_state_data(ConfirmColorState.type())['color'] = pick
+        self.user.get_state_data(ConfirmColorState.type())['color'] = pick
 
         message = ChooseFavoriteColorStrings.CONFIRM_COLOR.format(color=pick)
         return Transition([make_text_message(self.user.id, message)], ConfirmColorState.type())
@@ -45,20 +51,20 @@ class ConfirmColorState(ConfirmationState):
         return 'confirm-color'
 
     def handle_positive_response(self, message):
-        color = user.current_state_date()['color']
+        color = self.user.current_state_date()['color']
 
-        user.clear_current_state_data()
+        self.user.clear_current_state_data()
 
         m = ChooseFavoriteColorStrings.CONFIRMED_COLOR.format(color=color)
         return PopTransition([make_text_message(self.user.id, m)])
 
     def handle_negative_response(self, message):
-        user.clear_current_state_data()
+        self.user.clear_current_state_data()
 
         return Transition([make_text_message(self.user.id, message)], ChooseColorState.type())
 
     def handle_unmatched(self, message):
-        color = user.current_state_date()['color']
+        color = self.user.current_state_data()['color']
         m = ChooseFavoriteColorStrings.CONFIRMATION_CONFUSED.format(color=color)
 
         return LambdaTransition([make_text_message(self.user.id, m)])

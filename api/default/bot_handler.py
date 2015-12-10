@@ -6,6 +6,8 @@ from flask import request
 from config import Config
 from lib.utils import generate_signature, partition, error_response
 from lib.decorators import require_params
+from lib.bot_state_machine import state_machine
+from model import BotUser
 from secrets import BOT_API_KEY
 from app import app
 from errors import INVALID_PARAMETER, UNAUTHORIZED
@@ -34,4 +36,17 @@ def receive():
 @app.route('/tasks/incoming', methods=['POST'])
 @require_params('message')
 def incoming():
-    return 'yolo', 200
+    message = request.args['message']
+
+    user = BotUser.get_or_create(message['from'])
+    outgoing_messages = state_machine.handle_message(user, message)
+
+    user.put()
+
+    send_messages(outgoing_messages)
+
+    return '', 200
+
+
+def send_messages(cls, messages):
+    return send_messages(messages, bot_name=Config.BOT_USERNAME, bot_api_key=BOT_API_KEY)
