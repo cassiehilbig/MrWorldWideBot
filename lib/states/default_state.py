@@ -10,6 +10,10 @@ class DefaultStateStrings(object):
 
 class DefaultState(KeywordState):
 
+    @staticmethod
+    def type():
+        return 'default'
+
     @keyword_response('Color', 'colour')
     def handle_color(self, message):
         return LambdaTransition([make_text_message(self.user.id, DefaultStateStrings.COLOR_MESSAGE)])

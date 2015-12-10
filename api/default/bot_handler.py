@@ -4,9 +4,11 @@ from google.appengine.api import taskqueue
 from flask import request
 
 from config import Config
+from lib import logging
 from lib.utils import generate_signature, partition, error_response
 from lib.decorators import require_params
 from lib.bot_state_machine import state_machine
+from lib.kik_bot import send_messages
 from model import BotUser
 from secrets import BOT_API_KEY
 from app import app
@@ -38,15 +40,13 @@ def receive():
 def incoming():
     message = request.args['message']
 
+    logging.debug('Processing message: {}'.format(message))
+
     user = BotUser.get_or_create(message['from'])
     outgoing_messages = state_machine.handle_message(user, message)
 
     user.put()
 
-    send_messages(outgoing_messages)
+    send_messages(outgoing_messages, bot_name=Config.BOT_USERNAME, bot_api_key=BOT_API_KEY)
 
     return '', 200
-
-
-def send_messages(cls, messages):
-    return send_messages(messages, bot_name=Config.BOT_USERNAME, bot_api_key=BOT_API_KEY)

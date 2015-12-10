@@ -3,9 +3,9 @@ import mock
 
 from test.test_base import TestBase
 from lib.utils import generate_signature
+from model import BotUser
 from secrets import BOT_API_KEY
 from config import Config
-from const import MessageType
 
 
 class BotHandlerTest(TestBase):
@@ -115,12 +115,19 @@ class IncomingMessageTaskTest(TestBase):
     def test_no_message_param_silent_failure_if_task(self):
         self.api_call('post', '/tasks/incoming', headers=self.headers, status=200)
 
-    def test_success(self):
-        message = {
-            'type': MessageType.TEXT,
-            'from': 'foo',
-            'body': 'bar'
-        }
+    @mock.patch('api.default.bot_handler.send_messages')
+    @mock.patch('lib.bot_state_machine.state_machine.handle_message', return_value=['somemessage'])
+    def test_success(self, handle_message, send_messages):
+        message = {'from': 'someone'}
         self.api_call('post', '/tasks/incoming', data={
             'message': message
-        }, headers=self.headers, status=200)
+        })
+
+        self.assertIsNotNone(BotUser.get_by_id('someone'))
+
+        self.assertEqual(handle_message.call_count, 1)
+        self.assertEqual(handle_message.call_args[0][0], BotUser.get_by_id('someone'))
+        self.assertEqual(handle_message.call_args[0][1], message)
+
+        self.assertEqual(send_messages.call_count, 1)
+        self.assertEqual(send_messages.call_args[0][0], ['somemessage'])
