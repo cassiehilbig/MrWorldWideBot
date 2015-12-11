@@ -6,18 +6,23 @@ Use this repository to start building a bot.
 
 1. Get [Homebrew](http://brew.sh/)
 2. Install dependencies:
+
     ```sh
     brew install git python app-engine-python ngrok
     ```
+
 3. Install Fabric:
+
     ```sh
     pip install fabric
     ```
+
 4. Clone this repository
 
 ## Running unit tests
 
 In the project's root directory, run:
+
 ```sh
 fab install_test_dependencies
 ```
@@ -27,6 +32,7 @@ fab install_test_dependencies
 1. Go to the [Bot Dashboard](https://engine.kik.com) and scan the Kik Code to create a new bot.
 2. Once you've created your bot, open `config.py` and set `BOT_USERNAME` to the username you chose.
 3. Open `secrets.py` and set `BOT_API_KEY` to your bot's API key. You can find it in your [Reply Settings](https://engine.kik.com/#/engine).
+   **Make sure you never submit your API key to git.**
 
 ## Running the debug server
 
