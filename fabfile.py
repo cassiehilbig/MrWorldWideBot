@@ -59,7 +59,6 @@ def deploy():
         config_file.seek(0)
         config_file.write(text)
         config_file.truncate()
-    lint()
     try:
         refresh_token = environ[REFRESH_TOKEN_NAME]
     except KeyError:
