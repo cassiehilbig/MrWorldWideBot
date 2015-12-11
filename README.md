@@ -36,6 +36,12 @@ fab install_test_dependencies
 
 ## Running the debug server
 
+Install backend dependencies by running:
+
+```sh
+fab install_backend_dependencies
+```
+
 Start ngrok by running:
 ```sh
 ngrok 8080
