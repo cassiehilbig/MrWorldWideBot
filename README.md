@@ -36,7 +36,7 @@ export BOT_API_KEY={{api key}}
 #### Install backend dependencies
 
 ```sh
-fab install_backend_dependencies
+fab install_xlib
 ```
 
 You might get the error 
