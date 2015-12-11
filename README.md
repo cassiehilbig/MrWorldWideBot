@@ -16,6 +16,21 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 git clone https://github.com/kikinteractive/bot-starter-kit.git
 cd bot-starter-kit
 ./setup.mac.sh
+fab install_xlib
+fab test
+```
+
+You might get the error
+
+> DistutilsOptionError: must supply either home or prefix/exec-prefix -- not both
+>
+> Fatal error: local() encountered an error (return code 2) while executing 'pip install --upgrade --no-deps --requirement requirements_xlib.txt -t xlib'
+
+In which case follow this [Stack Overflow post](http://stackoverflow.com/q/24257803/368772) and run
+
+```sh
+echo "[install]"\n"prefix="\n > ~/.pydistutils.cfg
+fab install_xlib
 fab test
 ```
 
@@ -34,28 +49,6 @@ export BOT_API_KEY={{api key}}
 
 ## Running the debug server
 
-#### Install backend dependencies
-
-```sh
-fab install_xlib
-```
-
-You might get the error 
-
-```sh
-DistutilsOptionError: must supply either home or prefix/exec-prefix -- not both
-
-Fatal error: local() encountered an error (return code 2) while executing 'pip install --upgrade --no-deps --requirement requirements_xlib.txt -t xlib'
-```
-
-In which case follow this [Stack Overflow post](http://stackoverflow.com/q/24257803/368772) and run
-
-```sh
-echo "[install]"\n"prefix="\n > ~/.pydistutils.cfg
-fab install_backend_dependencies
-```
-
-#### Starting ngrok and your debug server
 ```sh
 ngrok 8080
 ```
