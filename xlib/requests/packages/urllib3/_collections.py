@@ -1,3 +1,9 @@
+# urllib3/_collections.py
+# Copyright 2008-2013 Andrey Petrov and contributors (see CONTRIBUTORS.txt)
+#
+# This module is part of urllib3 and is released under
+# the MIT License: http://www.opensource.org/licenses/mit-license.php
+
 from collections import Mapping, MutableMapping
 try:
     from threading import RLock
@@ -14,7 +20,7 @@ try: # Python 2.7+
     from collections import OrderedDict
 except ImportError:
     from .packages.ordered_dict import OrderedDict
-from .packages.six import iterkeys, itervalues
+from .packages.six import itervalues
 
 
 __all__ = ['RecentlyUsedContainer', 'HTTPHeaderDict']
@@ -85,7 +91,8 @@ class RecentlyUsedContainer(MutableMapping):
     def clear(self):
         with self.lock:
             # Copy pointers to all values, then wipe the mapping
-            values = list(itervalues(self._container))
+            # under Python 2, this copies the list of values twice :-|
+            values = list(self._container.values())
             self._container.clear()
 
         if self.dispose_func:
@@ -94,7 +101,7 @@ class RecentlyUsedContainer(MutableMapping):
 
     def keys(self):
         with self.lock:
-            return list(iterkeys(self._container))
+            return self._container.keys()
 
 
 class HTTPHeaderDict(MutableMapping):
@@ -109,7 +116,7 @@ class HTTPHeaderDict(MutableMapping):
     A ``dict`` like container for storing HTTP Headers.
 
     Field names are stored and compared case-insensitively in compliance with
-    RFC 7230. Iteration provides the first case-sensitive key seen for each
+    RFC 2616. Iteration provides the first case-sensitive key seen for each
     case-insensitive pair.
 
     Using ``__setitem__`` syntax overwrites fields that compare equal
