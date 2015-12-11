@@ -16,6 +16,7 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 git clone https://github.com/kikinteractive/bot-starter-kit.git
 cd bot-starter-kit
 ./setup.mac.sh
+fab test
 ```
 
 ## Setting up your bot
