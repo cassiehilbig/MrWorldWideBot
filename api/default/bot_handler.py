@@ -10,14 +10,13 @@ from lib.decorators import require_params
 from lib.bot_state_machine import state_machine
 from kik.api import send_messages
 from model import BotUser
-from secrets import BOT_API_KEY
 from app import app
 from errors import INVALID_PARAMETER, UNAUTHORIZED
 
 
 @app.route('/receive', methods=['POST'])
 def receive():
-    if request.headers.get('X-Kik-Signature') != generate_signature(BOT_API_KEY, request.get_data()):
+    if request.headers.get('X-Kik-Signature') != generate_signature(Config.BOT_API_KEY, request.get_data()):
         return error_response(403, UNAUTHORIZED, 'API signature incorrect')
 
     if not isinstance(request.args.get('messages'), list):
@@ -47,6 +46,6 @@ def incoming():
 
     user.put()
 
-    send_messages(outgoing_messages, bot_name=Config.BOT_USERNAME, bot_api_key=BOT_API_KEY)
+    send_messages(outgoing_messages, bot_name=Config.BOT_USERNAME, bot_api_key=Config.BOT_API_KEY)
 
     return '', 200

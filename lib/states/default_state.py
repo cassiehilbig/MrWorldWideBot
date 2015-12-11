@@ -3,7 +3,6 @@ from lib.states.state_types import StateTypes
 from kik.api import get_user_profile
 from kik.messages import make_text_message
 from config import Config
-from secrets import BOT_API_KEY
 
 
 class DefaultStateStrings(object):
@@ -17,6 +16,6 @@ class DefaultState(State):
         return StateTypes.DEFAULT
 
     def on_message(self, message):
-        profile = get_user_profile(message['from'], bot_name=Config.BOT_USERNAME, bot_api_key=BOT_API_KEY)
+        profile = get_user_profile(message['from'], bot_name=Config.BOT_USERNAME, bot_api_key=Config.BOT_API_KEY)
         m = DefaultStateStrings.WELCOME_MESSAGE.format(first_name=profile['firstName'])
         return StackTransition([make_text_message(m, self.user.id)], 'menu')

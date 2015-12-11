@@ -4,7 +4,6 @@ import mock
 from test.test_base import TestBase
 from lib.utils import generate_signature
 from model import BotUser
-from secrets import BOT_API_KEY
 from config import Config
 
 
@@ -19,13 +18,13 @@ class BotHandlerTest(TestBase):
     def test_data_not_json(self):
         body = 'yolo'
         self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(BOT_API_KEY, body)
+            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=400)
 
     def test_data_no_messages(self):
         body = json.dumps({})
         self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(BOT_API_KEY, body)
+            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=400)
 
     def test_data_messages_not_list(self):
@@ -33,7 +32,7 @@ class BotHandlerTest(TestBase):
             'messages': 'yolo'
         })
         self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(BOT_API_KEY, body)
+            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=400)
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
@@ -42,7 +41,7 @@ class BotHandlerTest(TestBase):
             'messages': []
         })
         self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(BOT_API_KEY, body)
+            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=200)
 
         self.assertEqual(queue.call_count, 0)
@@ -54,7 +53,7 @@ class BotHandlerTest(TestBase):
             'messages': [message]
         })
         self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(BOT_API_KEY, body)
+            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=200)
 
         self.assertEqual(queue.call_count, 1)
@@ -77,7 +76,7 @@ class BotHandlerTest(TestBase):
             'messages': [message0] * Config.MAX_TASKQUEUE_BATCH_SIZE + [message1]
         })
         self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(BOT_API_KEY, body)
+            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=200)
 
         self.assertEqual(queue.call_count, 2)

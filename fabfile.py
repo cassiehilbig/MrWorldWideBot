@@ -60,7 +60,7 @@ def debug(runtime='local'):
     install_test_dependencies()
     with shell_env(GAE_LOCAL_VM_RUNTIME='1'):
         local('''
-        dev_appserver.py --host 0.0.0.0 --log_level debug {MODULES} dispatch.yaml'''.format(**app_config))
+        dev_appserver.py --host 0.0.0.0 --log_level debug {MODULES}'''.format(**app_config))
 
 
 if environ.get('CI'):

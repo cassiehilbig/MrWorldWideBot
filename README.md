@@ -4,35 +4,41 @@ Use this repository to start building a bot.
 
 ## Prerequisites (Mac)
 
-1. Get [Homebrew](http://brew.sh/)
-2. Install dependencies:
+1. Get [Homebrew](http://brew.sh/):
 
-    ```sh
-    brew install git python app-engine-python ngrok
-    ```
+```sh
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
 
-3. Install Fabric:
+2. Clone this repository and run the setup script:
 
-    ```sh
-    pip install fabric
-    ```
+```sh
+git clone https://github.com/kikinteractive/bot-starter-kit.git
+cd bot-starter-kit
+./setup.mac.sh
+```
 
-4. Clone this repository
 
 ## Running unit tests
 
 In the project's root directory, run:
 
 ```sh
-fab install_test_dependencies
+fab test
 ```
 
 ## Setting up your bot
 
 1. Go to the [Bot Dashboard](https://engine.kik.com) and scan the Kik Code to create a new bot.
-2. Once you've created your bot, open `config.py` and set `BOT_USERNAME` to the username you chose.
-3. Open `secrets.py` and set `BOT_API_KEY` to your bot's API key. You can find it in your [Reply Settings](https://engine.kik.com/#/engine).
-   **Make sure you never submit your API key to git.**
+2. Once you've created your bot, set the `BOT_USERNAME` and `BOT_API_KEY` environment variables.
+
+`BOT_USERNAME` is the username of your bot,
+and `BOT_API_KEY` can be found in your [Reply Settings](https://engine.kik.com/#/engine).
+
+```sh
+export BOT_USERNAME={{username}}
+export BOT_API_KEY={{api key}}
+```
 
 ## Running the debug server
 
