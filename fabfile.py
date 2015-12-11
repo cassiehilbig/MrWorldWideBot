@@ -1,7 +1,7 @@
 from os import environ
 import re
 
-from fabric.api import hide, lcd, local, runs_once, shell_env
+from fabric.api import local, runs_once, shell_env
 
 
 ALL_ARGS = frozenset(['BOT_API_KEY', 'CI_COMMIT_ID', 'REFRESH_TOKEN'])
@@ -117,7 +117,8 @@ if environ.get('CI'):
                 text = re.sub(r'application: .*', 'application: {}'.format(app_config['APPLICATION']), text)
                 _overwrite(module_file, text)
 
-        local('appcfg.py update {} --oauth2_refresh_token={}'.format(app_config['MODULES'], app_config['REFRESH_TOKEN']))
+        local('appcfg.py update {} --oauth2_refresh_token={}'
+              .format(app_config['MODULES'], app_config['REFRESH_TOKEN']))
 
     def deploy_staging():
         """Alias for `fab staging deploy_application`"""

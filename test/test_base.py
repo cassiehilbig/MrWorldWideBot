@@ -6,7 +6,6 @@ import json
 from google.appengine.datastore import datastore_stub_util
 from google.appengine.ext import ndb
 from google.appengine.ext.testbed import TASKQUEUE_SERVICE_NAME, MEMCACHE_SERVICE_NAME
-# from webtest import TestApp
 
 from app import app
 from test.testbed import Testbed

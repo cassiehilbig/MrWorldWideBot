@@ -1,7 +1,6 @@
 import json
-from base64 import b64encode
 
-from google.appengine.api import urlfetch
+import requests
 
 KIK_BOT_SERVER_FORMAT = 'https://engine.apikik.com/api/v1/{}'
 KIK_BOT_MESSAGING_URL = KIK_BOT_SERVER_FORMAT.format('message')
@@ -64,13 +63,16 @@ def send_messages(messages, bot_name, bot_api_key):
     :return: The response from engine.apikik.com.
     :raises SendMessageError: if there is an error sending the messages.
     """
-    response = urlfetch.fetch(
+    response = requests.post(
         KIK_BOT_MESSAGING_URL,
-        method=urlfetch.POST,
-        payload=json.dumps({'messages': messages}),
-        headers=_generate_headers(bot_name, bot_api_key),
-        deadline=60
+        auth=(bot_name, bot_api_key),
+        timeout=60,
+        headers={
+            'Content-Type': 'application/json'
+        },
+        data=json.dumps({'messages': messages})
     )
+
     if response.status_code != 200:
         raise SendMessagesError('Failed to send messages to engine.apikik.com. ({}) - {}'.format(
             response.status_code, response.content
@@ -89,11 +91,10 @@ def get_user_profile(username, bot_name, bot_api_key):
     :return: The response from engine.apikik.com.
     :raises UserInfoError: if there is an error fetching user profile.
     """
-    response = urlfetch.fetch(
+    response = requests.get(
         KIK_BOT_USER_PROFILE_FORMAT.format(username=username),
-        method=urlfetch.GET,
-        headers=_generate_headers(bot_name, bot_api_key),
-        deadline=60
+        auth=(bot_name, bot_api_key),
+        timeout=60
     )
 
     if response.status_code != 200:
@@ -114,12 +115,14 @@ def create_video(public_video_url, bot_name, bot_api_key):
     :return: The response from engine.apikik.com.
     :raises VideoUploadError: if there is an error uploading the video.
     """
-    response = urlfetch.fetch(
+    response = requests.post(
         KIK_BOT_VIDEO_UPLOAD_URL,
-        method=urlfetch.POST,
-        payload=json.dumps({'videoUrl': public_video_url}),
-        headers=_generate_headers(bot_name, bot_api_key),
-        deadline=60
+        auth=(bot_name, bot_api_key),
+        timeout=60,
+        headers={
+            'Content-Type': 'application/json'
+        },
+        data=json.dumps({'videoUrl': public_video_url})
     )
 
     if response.status_code != 200:
@@ -148,17 +151,16 @@ def create_kik_code(bot_name, data):
         }
     }
 
-    response = urlfetch.fetch(
+    response = requests.post(
         KIK_CODE_CREATION_URL,
-        method=urlfetch.POST,
-        payload=json.dumps(payload),
         headers={
             'Content-Type': 'application/json'
         },
-        deadline=60
+        data=json.dumps(payload),
+        timeout=60
     )
 
-    if response.status_code != 200:
+    if response.status_code != 201:
         raise KikCodeGenerationError('Failed to generate the Kik Code. ({}) - {}'.format(
             response.status_code, response.content
         ))
@@ -180,10 +182,3 @@ def get_kik_code_url(kik_code_id, size=1024, color=None):
     if color is not None:
         return KIK_CODE_RETRIEVAL_FORMAT.format(code_id=kik_code_id, size=size, color_query='?c={}'.format(color))
     return KIK_CODE_RETRIEVAL_FORMAT.format(code_id=kik_code_id, size=size, color_query='')
-
-
-def _generate_headers(bot_name, bot_api_key):
-    return {
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic {}'.format(b64encode('{}:{}'.format(bot_name, bot_api_key)))
-    }

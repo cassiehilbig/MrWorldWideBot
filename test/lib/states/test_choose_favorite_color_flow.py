@@ -1,10 +1,7 @@
-import mock
-
 from test.example_bot_test_base import ExampleBotTestBase
-from lib.states.menu_state import MenuState
-from lib.states.color.choose_favorite_color_flow import ChooseFavoriteColorStrings, ChooseColorState, ConfirmColorState,\
-    COLORS
-from lib.state_machine import State, PopTransition
+from lib.states.color.choose_favorite_color_flow import ChooseFavoriteColorStrings, ChooseColorState,\
+    ConfirmColorState, COLORS
+from lib.state_machine import State
 from lib.bot_state_machine import state_machine
 from model import BotUser
 from const import MessageType

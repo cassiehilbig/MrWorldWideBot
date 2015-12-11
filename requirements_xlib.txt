@@ -1,6 +1,8 @@
+--extra-index-url https://pypi.fury.io/miNdT3n14uACXEj-Vswy/kik/
 requests==2.5.1
 Flask==0.10
 Werkzeug==0.11.2
 Jinja2==2.8
 MarkupSafe==0.23
 itsdangerous==0.24
+kik==0.0.1

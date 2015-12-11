@@ -1,5 +1,6 @@
 from lib.state_machine import State, StackTransition
-from lib.kik_bot import make_text_message, get_user_profile
+from kik import get_user_profile
+from lib.kik_bot import make_text_message
 from config import Config
 from secrets import BOT_API_KEY
 
