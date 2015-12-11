@@ -4,4 +4,5 @@ from color import ChooseColorState, ConfirmColorState
 from picture import picture_interceptor, SentPictureState
 
 
-__all__ = ['DefaultState', 'MenuState', 'ChooseColorState', 'ConfirmColorState', 'picture_interceptor']
+__all__ = ['DefaultState', 'MenuState', 'ChooseColorState', 'ConfirmColorState', 'picture_interceptor',
+           'SentPictureState']

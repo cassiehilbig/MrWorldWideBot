@@ -82,4 +82,7 @@ class ConfirmColorState(ConfirmationState):
         return LambdaTransition([make_text_message(m, self.user.id)])
 
     def on_resume(self):
+        color = self.user.current_state_data()['color']
+        m = ChooseFavoriteColorStrings.CONFIRMATION_CONFUSED.format(color=color)
+
         return LambdaTransition([make_text_message(m, self.user.id)])

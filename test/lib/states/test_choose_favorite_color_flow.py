@@ -1,7 +1,7 @@
 from test.example_bot_test_base import ExampleBotTestBase
 from lib.states.color.choose_favorite_color_flow import ChooseFavoriteColorStrings, ChooseColorState,\
     ConfirmColorState, COLORS
-from lib.state_machine import State
+from lib.state_machine import State, PopTransition
 from lib.bot_state_machine import state_machine
 from model import BotUser
 from const import MessageType
@@ -14,12 +14,23 @@ class GenericState(State):
         return 'foo'
 
 
+class AlwaysPoppingState(State):
+
+    @staticmethod
+    def type():
+        return 'pop'
+
+    def on_message(self, message):
+        return PopTransition([])
+
+
 class ChooseColorTest(ExampleBotTestBase):
 
     def setUp(self):
         super(ExampleBotTestBase, self).setUp()
         self.old_states = state_machine._states
         state_machine.register_state(GenericState)
+        state_machine.register_state(AlwaysPoppingState)
 
     def tearDown(self):
         super(ExampleBotTestBase, self).tearDown()
@@ -42,7 +53,7 @@ class ChooseColorTest(ExampleBotTestBase):
     def test_unkown_type(self):
         BotUser(id='remi', states=[ChooseColorState.type()]).put()
 
-        incoming_message = {'type': MessageType.PICTURE, 'from': 'remi', 'picUrl': 'http://yolo'}
+        incoming_message = {'type': MessageType.SCAN_DATA, 'from': 'remi', 'data': 'yolol'}
         outgoing_message = {
             'type': MessageType.TEXT,
             'to': 'remi',
@@ -82,6 +93,21 @@ class ChooseColorTest(ExampleBotTestBase):
         self.assertEqual(user.states, [GenericState.type(), ConfirmColorState.type()])
         self.assertEqual(user.state_data, {ConfirmColorState.type(): {'color': 'blue'}})
 
+    def test_resume(self):
+        BotUser(id='remi', states=[ChooseColorState.type(), AlwaysPoppingState.type()]).put()
+
+        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'yolo'}
+        outgoing_message = {
+            'type': MessageType.TEXT,
+            'to': 'remi',
+            'body': ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE,
+            'suggestedResponses': COLORS + ['Cancel']
+        }
+        self.bot_call([incoming_message], [outgoing_message])
+
+        user = BotUser.get_by_id('remi')
+        self.assertEqual(user.states, [ChooseColorState.type()])
+
 
 class ConfirmColorTest(ExampleBotTestBase):
 
@@ -89,6 +115,7 @@ class ConfirmColorTest(ExampleBotTestBase):
         super(ExampleBotTestBase, self).setUp()
         self.old_states = state_machine._states
         state_machine.register_state(GenericState)
+        state_machine.register_state(AlwaysPoppingState)
 
     def tearDown(self):
         super(ExampleBotTestBase, self).tearDown()
@@ -108,7 +135,9 @@ class ConfirmColorTest(ExampleBotTestBase):
         }
         self.bot_call([incoming_message], [outgoing_message])
 
-        self.assertEqual(BotUser.get_by_id('remi').states, [ConfirmColorState.type()])
+        user = BotUser.get_by_id('remi')
+        self.assertEqual(user.states, [ConfirmColorState.type()])
+        self.assertEqual(user.state_data, {ConfirmColorState.type(): {'color': 'blue'}})
 
     def test_cancel(self):
         BotUser(id='remi',
@@ -144,3 +173,21 @@ class ConfirmColorTest(ExampleBotTestBase):
         user = BotUser.get_by_id('remi')
         self.assertEqual(user.states, [GenericState.type()])
         self.assertEqual(user.state_data, {})
+
+    def test_resume(self):
+        BotUser(id='remi',
+                states=[ConfirmColorState.type(), AlwaysPoppingState.type()],
+                state_data={ConfirmColorState.type(): {'color': 'blue'}}).put()
+
+        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'yolo'}
+        outgoing_message = {
+            'type': MessageType.TEXT,
+            'to': 'remi',
+            'body': ChooseFavoriteColorStrings.CONFIRMATION_CONFUSED.format(color='blue'),
+            'suggestedResponses': ['Yes', 'No']
+        }
+        self.bot_call([incoming_message], [outgoing_message])
+
+        user = BotUser.get_by_id('remi')
+        self.assertEqual(user.states, [ConfirmColorState.type()])
+        self.assertEqual(user.state_data, {ConfirmColorState.type(): {'color': 'blue'}})
