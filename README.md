@@ -51,6 +51,8 @@ This will create a public tunnel to your local environment. Copy the URL that st
 Go to your [Reply Settings](https://engine.kik.com/#/engine) and change the URL to the one that you just copied followed by `/receive`.
 For instance: `https://4ce24529.ngrok.com/receive`.
 
+Start the sever by running:
+
 ```sh
 fab debug
 ```
