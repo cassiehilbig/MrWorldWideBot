@@ -3,6 +3,7 @@ from lib.states.menu_state import MenuState, MenuStateStrings
 from lib.states.color.choose_favorite_color_flow import ChooseColorState, COLORS
 from lib.state_machine import State, PopTransition
 from lib.bot_state_machine import state_machine
+from lib.states.state_types import StateTypes
 from model import BotUser
 from const import MessageType
 
@@ -27,6 +28,9 @@ class MenuStateTest(ExampleBotTestBase):
     def tearDown(self):
         super(ExampleBotTestBase, self).tearDown()
         state_machine._states = self.old_states
+
+    def test_static(self):
+        self.assertEqual(MenuState.type(), StateTypes.MENU)
 
     def test_confused(self):
         BotUser(id='remi', states=[MenuState.type()]).put()

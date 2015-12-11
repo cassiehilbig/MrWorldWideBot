@@ -1,5 +1,6 @@
 from lib.state_machine import KeywordState, keyword_response, ConfirmationState, Transition, PopTransition,\
     LambdaTransition
+from lib.states.state_types import StateTypes
 from kik.messages import make_text_message
 from const import MessageType
 
@@ -22,7 +23,7 @@ class ChooseColorState(KeywordState):
 
     @staticmethod
     def type():
-        return 'choose-color'
+        return StateTypes.CHOOSE_COLOR
 
     def __init__(self, user):
         super(ChooseColorState, self).__init__(user)
@@ -57,7 +58,7 @@ class ConfirmColorState(ConfirmationState):
 
     @staticmethod
     def type():
-        return 'confirm-color'
+        return StateTypes.CONFIRM_COLOR
 
     def handle_positive_response(self, message):
         color = self.user.current_state_data()['color']

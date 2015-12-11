@@ -3,6 +3,7 @@ from lib.states.color.choose_favorite_color_flow import ChooseFavoriteColorStrin
     ConfirmColorState, COLORS
 from lib.state_machine import State, PopTransition
 from lib.bot_state_machine import state_machine
+from lib.states.state_types import StateTypes
 from model import BotUser
 from const import MessageType
 
@@ -35,6 +36,9 @@ class ChooseColorTest(ExampleBotTestBase):
     def tearDown(self):
         super(ExampleBotTestBase, self).tearDown()
         state_machine._states = self.old_states
+
+    def test_static(self):
+        self.assertEqual(ChooseColorState.type(), StateTypes.CHOOSE_COLOR)
 
     def test_confused(self):
         BotUser(id='remi', states=[ChooseColorState.type()]).put()
@@ -120,6 +124,9 @@ class ConfirmColorTest(ExampleBotTestBase):
     def tearDown(self):
         super(ExampleBotTestBase, self).tearDown()
         state_machine._states = self.old_states
+
+    def test_static(self):
+        self.assertEqual(ConfirmColorState.type(), StateTypes.CONFIRM_COLOR)
 
     def test_confused(self):
         BotUser(id='remi',

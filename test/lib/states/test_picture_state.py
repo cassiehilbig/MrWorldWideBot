@@ -1,7 +1,8 @@
 from test.example_bot_test_base import ExampleBotTestBase
 from lib.state_machine import State
 from lib.bot_state_machine import state_machine
-from lib.states.picture .sent_picture_state import SentPictureStrings
+from lib.states.picture.sent_picture_state import SentPictureStrings, SentPictureState
+from lib.states.state_types import StateTypes
 from model import BotUser
 from const import MessageType
 
@@ -23,6 +24,9 @@ class PictureStateTest(ExampleBotTestBase):
     def tearDown(self):
         super(ExampleBotTestBase, self).tearDown()
         state_machine._states = self.old_states
+
+    def test_static(self):
+        self.assertEqual(SentPictureState.type(), StateTypes.SENT_PICTURE)
 
     def test_intercept(self):
         BotUser(id='remi', states=[GenericState.type()]).put()

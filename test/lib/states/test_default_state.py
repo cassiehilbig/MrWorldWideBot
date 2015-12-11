@@ -3,11 +3,15 @@ import mock
 from test.example_bot_test_base import ExampleBotTestBase
 from lib.states.menu_state import MenuState
 from lib.states.default_state import DefaultState, DefaultStateStrings
+from lib.states.state_types import StateTypes
 from model import BotUser
 from const import MessageType
 
 
 class MenuStateTest(ExampleBotTestBase):
+
+    def test_static(self):
+        self.assertEqual(DefaultState.type(), StateTypes.DEFAULT)
 
     @mock.patch('lib.states.default_state.get_user_profile', return_value={'firstName': 'Rems'})
     def test_stack_not_existing_user(self, get_user_profile):
