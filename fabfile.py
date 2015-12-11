@@ -4,14 +4,14 @@ import re
 from fabric.api import hide, lcd, local, runs_once, shell_env
 
 
-ALL_ARGS = frozenset(['BOT_API_KEY', 'CI_COMMIT_ID', 'GOOGLE_CLOUD_KEY', 'GOOGLE_DEVELOPER_KEY'])
+ALL_ARGS = frozenset(['BOT_API_KEY', 'CI_COMMIT_ID', 'REFRESH_TOKEN'])
 # These are the same for prod and staging.
-COMMON_ARGS = frozenset(['BOT_API_KEY', 'CI_COMMIT_ID'])
+COMMON_ARGS = frozenset(['BOT_API_KEY', 'CI_COMMIT_ID', 'REFRESH_TOKEN'])
 # These are different for prod and staging. Staging is prepended with "STAGING_"
 APPLICATION_ARGS = ALL_ARGS.difference(COMMON_ARGS)
 
-# Backend uses everything except the frontend tokens, GOOGLE_CLOUD_KEY, and CI_COMMIT_ID.
-BACKEND_ARGS = ALL_ARGS.difference(['CI_COMMIT_ID', 'GOOGLE_CLOUD_KEY', 'MIXPANEL_FRONTEND_TOKEN', 'STRIPE_API_KEY'])
+# Backend uses everything except REFRESH_TOKEN, and CI_COMMIT_ID.
+BACKEND_ARGS = ALL_ARGS.difference(['CI_COMMIT_ID', 'REFRESH_TOKEN'])
 
 
 app_config = {
@@ -111,22 +111,13 @@ if environ.get('CI'):
         if 'APPLICATION' not in app_config:
             raise Exception('Deploy environment not specified. Use `fab staging deploy` or `fab production deploy`.')
         secrets()
-        with lcd('frontend'):
-            local('bower prune --production')
-            local('npm prune --production')
         for module in app_config['MODULES'].split(' '):
             with open(module, 'r+') as module_file:
                 text = module_file.read()
                 text = re.sub(r'application: .*', 'application: {}'.format(app_config['APPLICATION']), text)
                 _overwrite(module_file, text)
-        local('tools/install_gcloud.sh')
-        with shell_env(PATH='{HOME}/cache/google-cloud-sdk/bin:{PATH}'.format(**environ),
-                       CLOUDSDK_PYTHON_SITEPACKAGES='1'), hide('running'):
-            local('''echo '{GOOGLE_CLOUD_KEY}' > google-cloud-key.json'''.format(**app_config), shell='/bin/bash')
-            local('gcloud auth activate-service-account --key-file google-cloud-key.json --project "{APPLICATION}"'
-                  .format(**app_config))
-            local('gcloud preview app deploy --verbosity debug --version "$(git rev-parse --short {CI_COMMIT_ID})" {MODULES} {CONFIGS}'  # noqa
-                  .format(**app_config))
+
+        local('appcfg.py update {} --oauth2_refresh_token={}'.format(app_config['MODULES'], app_config['REFRESH_TOKEN']))
 
     def deploy_staging():
         """Alias for `fab staging deploy_application`"""
