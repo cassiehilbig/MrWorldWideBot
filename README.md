@@ -2,7 +2,7 @@
 
 Use this repository to start building a bot.
 
-## Prerequisites
+## Prerequisites (Mac)
 
 1. Get [Homebrew](http://brew.sh/)
 2. Install dependencies:
