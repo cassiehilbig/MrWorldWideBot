@@ -4,20 +4,20 @@ Use this repository to start building a bot.
 
 ## Prerequisites (Mac)
 
-1. Get [Homebrew](http://brew.sh/)
-2. Install dependencies:
+1. Get [Homebrew](http://brew.sh/):
 
-    ```sh
-    brew install git python app-engine-python ngrok
-    ```
+```sh
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
 
-3. Install Fabric:
+2. Clone this repository and run the setup script:
 
-    ```sh
-    pip install fabric
-    ```
+```sh
+git clone https://github.com/kikinteractive/bot-starter-kit.git
+cd bot-starter-kit
+./setup.mac.sh
+```
 
-4. Clone this repository
 
 ## Running unit tests
 
