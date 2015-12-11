@@ -49,6 +49,9 @@ class ChooseColorState(KeywordState):
         message = ChooseFavoriteColorStrings.CONFIRM_COLOR.format(color=pick)
         return Transition([make_text_message(message, self.user.id)], ConfirmColorState.type())
 
+    def on_resume(self):
+        return LambdaTransition([make_text_message(ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE, self.user.id)])
+
 
 class ConfirmColorState(ConfirmationState):
 
@@ -76,4 +79,7 @@ class ConfirmColorState(ConfirmationState):
         color = self.user.current_state_data()['color']
         m = ChooseFavoriteColorStrings.CONFIRMATION_CONFUSED.format(color=color)
 
+        return LambdaTransition([make_text_message(m, self.user.id)])
+
+    def on_resume(self):
         return LambdaTransition([make_text_message(m, self.user.id)])
