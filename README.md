@@ -18,15 +18,6 @@ cd bot-starter-kit
 ./setup.mac.sh
 ```
 
-
-## Running unit tests
-
-In the project's root directory, run:
-
-```sh
-fab test
-```
-
 ## Setting up your bot
 
 1. Go to the [Bot Dashboard](https://engine.kik.com) and scan the Kik Code to create a new bot.
@@ -42,7 +33,7 @@ export BOT_API_KEY={{api key}}
 
 ## Running the debug server
 
-Install backend dependencies by running:
+#### Install backend dependencies
 
 ```sh
 fab install_backend_dependencies
@@ -56,9 +47,14 @@ DistutilsOptionError: must supply either home or prefix/exec-prefix -- not both
 Fatal error: local() encountered an error (return code 2) while executing 'pip install --upgrade --no-deps --requirement requirements_xlib.txt -t xlib'
 ```
 
-In which case follow this [stack overflow post](http://stackoverflow.com/questions/24257803/distutilsoptionerror-must-supply-either-home-or-prefix-exec-prefix-not-both) and run `echo "[install]"\n"prefix="\n > ~/.pydistutils.cfg` and then run `fab install_backend_dependencies`
+In which case follow this [Stack Overflow post](http://stackoverflow.com/q/24257803/368772) and run
 
-Start ngrok by running:
+```sh
+echo "[install]"\n"prefix="\n > ~/.pydistutils.cfg
+fab install_backend_dependencies
+```
+
+#### Starting ngrok and your debug server
 ```sh
 ngrok 8080
 ```
@@ -75,6 +71,30 @@ fab debug
 
 Start texting your bot. Enjoy!
 
+## Running unit tests
+
+In the project's root directory, run:
+
+```sh
+fab test
+```
+
 ## Deploying
 
-Coming soon
+1. Setup a project on the [Google Developers Console](https://console.developers.google.com/).
+
+2. Edit the `application` field in `app.yaml` with your application id.
+
+3. Do an initial deploy. You will need to login through your Google account that is linked to the application.
+
+```sh
+fab deploy
+```
+
+(For automated deploys)
+
+4. The deploy command should output your refresh token. Add this to the environment to have automated deploys using `fab deploy`.
+
+```sh
+export GOOGLE_REFRESH_TOKEN={{refresh token}}
+```
