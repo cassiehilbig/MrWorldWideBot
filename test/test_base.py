@@ -7,8 +7,12 @@ from google.appengine.datastore import datastore_stub_util
 from google.appengine.ext import ndb
 from google.appengine.ext.testbed import TASKQUEUE_SERVICE_NAME, MEMCACHE_SERVICE_NAME
 
-from app import app
 from test.testbed import Testbed
+
+os.environ['BOT_USERNAME'] = 'test_bot'
+os.environ['BOT_API_KEY'] = 'test_key'
+
+from app import app
 
 
 class TestBase(TestCase):
