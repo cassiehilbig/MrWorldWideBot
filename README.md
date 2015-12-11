@@ -42,6 +42,16 @@ Install backend dependencies by running:
 fab install_backend_dependencies
 ```
 
+You might get the error 
+
+```sh
+DistutilsOptionError: must supply either home or prefix/exec-prefix -- not both
+
+Fatal error: local() encountered an error (return code 2) while executing 'pip install --upgrade --no-deps --requirement requirements_xlib.txt -t xlib'
+```
+
+In which case follow this [stack overflow post](http://stackoverflow.com/questions/24257803/distutilsoptionerror-must-supply-either-home-or-prefix-exec-prefix-not-both) and run `echo "[install]"\n"prefix="\n > ~/.pydistutils.cfg` and then run `fab install_backend_dependencies`
+
 Start ngrok by running:
 ```sh
 ngrok 8080
