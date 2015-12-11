@@ -8,7 +8,7 @@ from lib import logging
 from lib.utils import generate_signature, partition, error_response
 from lib.decorators import require_params
 from lib.bot_state_machine import state_machine
-from kik import send_messages
+from kik.api import send_messages
 from model import BotUser
 from secrets import BOT_API_KEY
 from app import app

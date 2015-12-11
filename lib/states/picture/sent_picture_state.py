@@ -1,5 +1,5 @@
 from lib.state_machine import State, PopTransition
-from kik import make_text_message
+from kik.messages import make_text_message
 
 
 class SentPictureStrings(object):
