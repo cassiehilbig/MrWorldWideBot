@@ -1,6 +1,6 @@
 from lib.state_machine import KeywordState, keyword_response, ConfirmationState, Transition, PopTransition,\
     LambdaTransition
-from lib.kik_bot import make_text_message
+from kik import make_text_message
 from const import MessageType
 
 

@@ -1,5 +1,5 @@
 from lib.state_machine import KeywordState, keyword_response, LambdaTransition, StackTransition
-from lib.kik_bot import make_text_message
+from kik import make_text_message
 
 
 class MenuStateStrings(object):
