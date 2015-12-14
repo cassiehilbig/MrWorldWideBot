@@ -11,16 +11,15 @@ from lib.bot_state_machine import state_machine
 from kik.api import send_messages
 from model import BotUser
 from app import app
-from errors import INVALID_PARAMETER, UNAUTHORIZED
 
 
 @app.route('/receive', methods=['POST'])
 def receive():
     if request.headers.get('X-Kik-Signature') != generate_signature(Config.BOT_API_KEY, request.get_data()):
-        return error_response(403, UNAUTHORIZED, 'API signature incorrect')
+        return error_response(403, 'API signature incorrect')
 
     if not isinstance(request.args.get('messages'), list):
-        return error_response(400, INVALID_PARAMETER, 'Invalid request body')
+        return error_response(400, 'Invalid request body')
 
     tasks = []
     for message in request.args['messages']:

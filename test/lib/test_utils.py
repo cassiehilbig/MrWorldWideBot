@@ -12,6 +12,7 @@ class UtilsTest(TestBase):
     @mock.patch('lib.utils.is_debug', return_value=False)
     def test_server_url_production(self, is_debug):
         self.assertEqual(server_url(), 'https://bot-dashboard.appspot.com')
+        self.assertTrue(is_debug.called)
 
     def test_partition_empty_list(self):
         self.assertListEqual(partition([], 5), [])
@@ -23,7 +24,7 @@ class UtilsTest(TestBase):
         self.assertListEqual(partition([1, 2, 3, 4, 5, 6], 2), [[1, 2], [3, 4], [5, 6]])
 
     def test_error_response_with_message(self):
-        self.assertEqual(error_response(123, 'code', 'msg'), (json.dumps({'error': 'code', 'message': 'msg'}), 123))
+        self.assertEqual(error_response(123, 'msg'), (json.dumps({'message': 'msg'}), 123))
 
     def test_error_response_no_message(self):
-        self.assertEqual(error_response(123, 'code'), (json.dumps({'error': 'code', 'message': None}), 123))
+        self.assertEqual(error_response(123), (json.dumps({'message': None}), 123))

@@ -30,8 +30,7 @@ def partition(lst, size):
     return [lst[i:i + size] for i in range(0, len(lst), size)]
 
 
-def error_response(status_code, error, message=None):
+def error_response(status_code, message=None):
     return json.dumps({
-        'error': error,
         'message': message
     }), status_code
