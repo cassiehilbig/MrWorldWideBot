@@ -31,6 +31,7 @@ In which case run:
 ```sh
 echo "[install]"\n"prefix="\n > ~/.pydistutils.cfg
 fab install_xlib
+rm ~/.pydistutils.cfg
 fab test
 ```
 
