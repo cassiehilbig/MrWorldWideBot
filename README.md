@@ -26,7 +26,7 @@ You might get the error
 >
 > Fatal error: local() encountered an error (return code 2) while executing 'pip install --upgrade --no-deps --requirement requirements_xlib.txt -t xlib'
 
-In which case follow this [Stack Overflow post](http://stackoverflow.com/q/24257803/368772) and run
+In which case run:
 
 ```sh
 echo "[install]"\n"prefix="\n > ~/.pydistutils.cfg
