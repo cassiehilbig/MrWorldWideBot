@@ -10,11 +10,11 @@ Use this repository to start building a bot.
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
-2. Clone this repository and run the setup script:
+2. Fork this project.
+
+2. In the project's root directory, run:
 
 ```sh
-git clone https://github.com/kikinteractive/bot-starter-kit.git
-cd bot-starter-kit
 ./setup.mac.sh
 fab install_xlib
 fab test
@@ -57,7 +57,7 @@ This will create a public tunnel to your local environment. Copy the URL that st
 Go to your [Reply Settings](https://engine.kik.com/#/engine) and change the URL to the one that you just copied followed by `/receive`.
 For instance: `https://4ce24529.ngrok.com/receive`.
 
-Start the sever by running:
+Start the server by running:
 
 ```sh
 fab debug
@@ -77,13 +77,19 @@ fab test
 
 1. Setup a project on the [Google Developers Console](https://console.developers.google.com/).
 
-2. Edit the `application` field in `app.yaml` with your application id.
+2. Export your project id for the deploy command to use:
+
+```sh
+export GOOGLE_PROJECT_ID={{project id}}
+```
 
 3. Do an initial deploy. You will need to login through your Google account that is linked to the application.
 
 ```sh
 fab deploy
 ```
+
+The deploy command will modify some files to prepare them for deployment. Do not check in these changes.
 
 (For automated deploys)
 

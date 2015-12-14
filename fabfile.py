@@ -3,10 +3,12 @@ from os import environ
 import re
 
 from fabric.api import hide, local, runs_once
+from fabric.colors import magenta
 
+PROJECT_ID_NAME = 'GOOGLE_PROJECT_ID'
 REFRESH_TOKEN_NAME = 'GOOGLE_REFRESH_TOKEN'
 
-ALL_ARGS = frozenset(['BOT_USERNAME', 'BOT_API_KEY'])
+ALL_CONFIGS = frozenset(['BOT_USERNAME', 'BOT_API_KEY'])
 
 
 @runs_once
@@ -47,32 +49,38 @@ def debug():
 def deploy():
     """Deploys application"""
     config = {}
-    for arg in ALL_ARGS:
+    for arg in ALL_CONFIGS:
         config[arg] = environ[arg]
+    with open('app.yaml', 'r+') as app_file:
+        text = app_file.read()
+        text = re.sub('application:.*', 'application: {}'.format(environ[PROJECT_ID_NAME]), text)
+        _overwrite(app_file, text)
     with open('config.py', 'r+') as config_file:
         text = config_file.read()
-        for arg in ALL_ARGS:
+        for arg in ALL_CONFIGS:
             if arg not in text:
                 raise Exception('{} not found in config file'.format(arg))
-            print arg, config[arg], text
             text = re.sub(r'{0} = .*'.format(arg), '{0} = \'{1}\''.format(arg, config[arg]), text)
-        config_file.seek(0)
-        config_file.write(text)
-        config_file.truncate()
+        _overwrite(config_file, text)
     try:
         refresh_token = environ[REFRESH_TOKEN_NAME]
     except KeyError:
         with hide('running'):
-            local('echo {} was not found in the environment'.format(REFRESH_TOKEN_NAME))
-            local('echo Retrieving refresh token')
+            print magenta('{} was not found in the environment'.format(REFRESH_TOKEN_NAME))
             local('appcfg.py list_versions .', capture=True)
             with open('{}/.appcfg_oauth2_tokens'.format(environ['HOME'])) as token_file:
                 token_text = token_file.read()
             refresh_token = json.loads(token_text)['refresh_token']
-            local('echo Your refresh token is: {}.')
-            local('echo Please have it in the environment using: '.format(refresh_token))
-            local('echo export {}={}'.format(REFRESH_TOKEN_NAME, refresh_token))
+            print magenta('Your refresh token is: {}'.format(refresh_token))
+            print magenta('Please have it in the environment using: '.format(refresh_token))
+            print magenta('export {}={}'.format(REFRESH_TOKEN_NAME, refresh_token))
     local('appcfg.py update . --oauth2_refresh_token {}'.format(refresh_token))
     local('appcfg.py update_queues . --oauth2_refresh_token {}'.format(refresh_token))
     local('appcfg.py update_indexes . --oauth2_refresh_token {}'.format(refresh_token))
     local('appcfg.py update_cron . --oauth2_refresh_token {}'.format(refresh_token))
+
+
+def _overwrite(file_obj, text):
+    file_obj.seek(0)
+    file_obj.write(text)
+    file_obj.truncate()
