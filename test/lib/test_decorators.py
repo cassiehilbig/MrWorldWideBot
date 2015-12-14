@@ -1,7 +1,6 @@
 import mock
 
 from test.test_base import TestBase
-from errors import INVALID_PARAMETER
 from lib.decorators import require_params, log_error_after_task_failures
 from app import app
 
@@ -94,7 +93,6 @@ class DecoratorsTest(TestBase):
         j = self.api_call('post', '/test/require_params', status=400).json
 
         self.assertEqual(j, {
-            'error': INVALID_PARAMETER,
             'message': 'Missing params: {}'.format(', '.join(REQUIRED_PARAMS))
         })
 
@@ -104,7 +102,6 @@ class DecoratorsTest(TestBase):
             body = {param: 'Some value' for param in sent_params}
             j = self.api_call('post', '/test/require_params', data=body, status=400).json
             self.assertEqual(j, {
-                'error': INVALID_PARAMETER,
                 'message': 'Missing params: {}'.format(param)
             })
 
