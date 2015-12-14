@@ -9,7 +9,6 @@ class BotUser(BaseModel):
 
     def __init__(self, *args, **kwargs):
         super(BotUser, self).__init__(*args, **kwargs)
-        self._admin_cache = None
         self.state_data = self.state_data or {}
 
     @property
