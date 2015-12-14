@@ -1,6 +1,6 @@
 # Bot starter kit
 
-Use this repository to start building a bot.
+Use this repository to start building a bot based on Google App Engine.
 
 ## Prerequisites (Mac)
 
