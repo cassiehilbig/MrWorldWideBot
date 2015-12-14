@@ -4,7 +4,6 @@ from flask import request
 
 from lib import logging
 from lib.utils import error_response
-from errors import INVALID_PARAMETER
 
 
 def require_params(*params):
@@ -18,7 +17,7 @@ def require_params(*params):
                 # they fail, but this failure is not recoverable, so respond successfully after logging.
                 if 'X-AppEngine-TaskName' not in request.headers:
                     logging.info(message)
-                    return error_response(400, INVALID_PARAMETER, message)
+                    return error_response(400, message)
                 else:
                     logging.error(message)
                     return '', 200
