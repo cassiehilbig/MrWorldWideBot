@@ -130,3 +130,5 @@ class IncomingMessageTaskTest(TestBase):
 
         self.assertEqual(send_messages.call_count, 1)
         self.assertEqual(send_messages.call_args[0][0], ['somemessage'])
+        self.assertEqual(send_messages.call_args[1]['bot_name'], Config.BOT_USERNAME)
+        self.assertEqual(send_messages.call_args[1]['bot_api_key'], Config.BOT_API_KEY)
