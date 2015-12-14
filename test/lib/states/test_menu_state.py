@@ -1,3 +1,5 @@
+from kik.messages import MessageType
+
 from test.example_bot_test_base import ExampleBotTestBase
 from lib.states.menu_state import MenuState, MenuStateStrings
 from lib.states.color.choose_favorite_color_flow import ChooseColorState, COLORS
@@ -5,7 +7,6 @@ from lib.state_machine import State, PopTransition
 from lib.bot_state_machine import state_machine
 from lib.states.state_types import StateTypes
 from model import BotUser
-from const import MessageType
 
 
 class AlwaysPoppingState(State):

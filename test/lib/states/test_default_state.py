@@ -1,11 +1,11 @@
 import mock
+from kik.messages import MessageType
 
 from test.example_bot_test_base import ExampleBotTestBase
 from lib.states.menu_state import MenuState
 from lib.states.default_state import DefaultState, DefaultStateStrings
 from lib.states.state_types import StateTypes
 from model import BotUser
-from const import MessageType
 
 
 class MenuStateTest(ExampleBotTestBase):
