@@ -40,28 +40,34 @@ def coverage():
     local('coverage report -m')
 
 
-def debug():
-    """Starts up debug server. Run with `debug:docker` to run with docker"""
-    install()
-    local('dev_appserver.py --host 0.0.0.0 --log_level debug app.yaml')
-
-
-def deploy():
-    """Deploys application"""
+def prepare_env(project=None):
     config = {}
     for arg in ALL_CONFIGS:
         config[arg] = environ[arg]
     with open('app.yaml', 'r+') as app_file:
         text = app_file.read()
-        text = re.sub('application:.*', 'application: {}'.format(environ[PROJECT_ID_NAME]), text)
-        _overwrite(app_file, text)
-    with open('config.py', 'r+') as config_file:
-        text = config_file.read()
+        if project is not None:
+            text = re.sub('application:.*', 'application: {}'.format(project, text))
         for arg in ALL_CONFIGS:
             if arg not in text:
-                raise Exception('{} not found in config file'.format(arg))
-            text = re.sub(r'{0} = .*'.format(arg), '{0} = \'{1}\''.format(arg, config[arg]), text)
-        _overwrite(config_file, text)
+                raise Exception('{} not found in app.yaml file'.format(arg))
+            text = re.sub(r'{0}: .*'.format(arg), '{0}: \'{1}\''.format(arg, config[arg]), text)
+        app_file.seek(0)
+        app_file.write(text)
+        app_file.truncate()
+
+
+def debug():
+    """Starts up debug server"""
+    install()
+    prepare_env()
+    local('dev_appserver.py --host 0.0.0.0 --log_level debug app.yaml')
+
+
+def deploy():
+    """Deploys application"""
+    install()
+    prepare_env(environ[PROJECT_ID_NAME])
     try:
         refresh_token = environ[REFRESH_TOKEN_NAME]
     except KeyError:
@@ -78,9 +84,3 @@ def deploy():
     local('appcfg.py update_queues . --oauth2_refresh_token {}'.format(refresh_token))
     local('appcfg.py update_indexes . --oauth2_refresh_token {}'.format(refresh_token))
     local('appcfg.py update_cron . --oauth2_refresh_token {}'.format(refresh_token))
-
-
-def _overwrite(file_obj, text):
-    file_obj.seek(0)
-    file_obj.write(text)
-    file_obj.truncate()
