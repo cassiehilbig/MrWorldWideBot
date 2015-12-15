@@ -12,7 +12,7 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 
 2. Fork this project.
 
-2. In the project's root directory, run:
+3. In the project's root directory, run:
 
 ```sh
 ./setup.mac.sh
