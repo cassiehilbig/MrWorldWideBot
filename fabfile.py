@@ -12,7 +12,7 @@ ALL_CONFIGS = frozenset(['BOT_USERNAME', 'BOT_API_KEY'])
 
 
 @runs_once
-def install_xlib(reinstall=True):
+def install_xlib(reinstall=False):
     if reinstall:
         local('rm -rf xlib/*')
     local('printf \'%s\n%s\n\' \'[install]\' \'prefix=\' > ~/.pydistutils.cfg')
@@ -64,7 +64,7 @@ def prepare_env(project=None):
 def debug():
     """Starts up debug server"""
     install()
-    install_xlib(reinstall=False)
+    install_xlib()
     prepare_env()
     local('dev_appserver.py --host 0.0.0.0 --log_level debug app.yaml')
 
@@ -72,7 +72,7 @@ def debug():
 def deploy():
     """Deploys application"""
     install()
-    install_xlib()
+    install_xlib(reinstall=True)
     prepare_env(environ[PROJECT_ID_NAME])
     try:
         refresh_token = environ[REFRESH_TOKEN_NAME]
