@@ -61,6 +61,16 @@ class TestBotUser(TestBase):
         self.assertEqual(user.current_state_data(), {'a': 'b', 'key': 'value'})
         user.clear_current_state_data()
         self.assertEqual(user.current_state_data(), {})
+        
+    def test_clear_current_state_data_no_states(self):
+       user = BotUser()
+       self.assertRaises(Exception, user.clear_current_state_data)
+
+    def test_clear_current_state_data_no_data(self):
+       user = BotUser(states=['some_state'], state_data={'foo': {'bar': 'baz'}})
+       user.clear_current_state_data()
+       self.assertEqual(user.state_data, {'foo': {'bar': 'baz'}})
+       self.assertEqual(user.current_state_data(), {})    
 
     def test_generate_id(self):
         self.assertEqual(BotUser._generate_id('aleem'), 'aleem')
