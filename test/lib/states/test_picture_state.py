@@ -1,7 +1,7 @@
 from kik.messages import MessageType
+from kik.state_machine import State
 
 from test.example_bot_test_base import ExampleBotTestBase
-from lib.state_machine import State
 from lib.bot_state_machine import state_machine
 from lib.states.picture.sent_picture_state import SentPictureStrings, SentPictureState
 from lib.states.state_types import StateTypes

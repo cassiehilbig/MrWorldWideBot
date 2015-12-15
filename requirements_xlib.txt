@@ -5,4 +5,4 @@ Werkzeug==0.11.2
 Jinja2==2.8
 MarkupSafe==0.23
 itsdangerous==0.24
-kik==0.0.1
+kik==0.0.3

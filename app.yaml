@@ -5,10 +5,16 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-
 - url: .*
   script: app.app
 
+env_variables:
+  BOT_USERNAME: 'your-bot-username-here'
+  BOT_API_KEY: 'your-api-key-here'
+
 libraries:
-  - name: ssl
-    version: latest
+- name: ssl
+  version: latest
+
+inbound_services:
+- warmup
