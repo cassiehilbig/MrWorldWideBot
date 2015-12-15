@@ -6,9 +6,9 @@ Use this repository to start building a bot based on Google App Engine.
 
 1. Get [Homebrew](http://brew.sh/):
 
-```sh
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
+    ```sh
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    ```
 
 2. Fork this project.
 
