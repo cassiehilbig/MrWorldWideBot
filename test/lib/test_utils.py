@@ -1,7 +1,6 @@
-import mock
 import json
 
-from lib.utils import server_url, partition, error_response
+from lib.utils import partition, error_response
 from test.test_base import TestBase
 
 
