@@ -14,26 +14,26 @@ Use this repository to start building a bot based on Google App Engine.
 
 3. In the project's root directory, run:
 
-```sh
-./setup.mac.sh
-fab install_xlib
-fab test
-```
+    ```sh
+    ./setup.mac.sh
+    fab install_xlib
+    fab test
+    ```
 
-You might get the error
+    You might get the error
 
-> DistutilsOptionError: must supply either home or prefix/exec-prefix -- not both
->
-> Fatal error: local() encountered an error (return code 2) while executing 'pip install --upgrade --no-deps --requirement requirements_xlib.txt -t xlib'
+    > DistutilsOptionError: must supply either home or prefix/exec-prefix -- not both
+    >
+    > Fatal error: local() encountered an error (return code 2) while executing 'pip install --upgrade --no-deps --requirement requirements_xlib.txt -t xlib'
 
-In which case run:
+    In which case run:
 
-```sh
-printf '%s\n%s\n' '[install]' 'prefix=' > ~/.pydistutils.cfg
-fab install_xlib
-rm ~/.pydistutils.cfg
-fab test
-```
+    ```sh
+    printf '%s\n%s\n' '[install]' 'prefix=' > ~/.pydistutils.cfg
+    fab install_xlib
+    rm ~/.pydistutils.cfg
+    fab test
+    ```
 
 ## Setting up your bot
 
@@ -96,6 +96,6 @@ fab test
 
 4. The deploy command should output your refresh token. Add this to the environment to have automated deploys using `fab deploy`.
 
-```sh
-export GOOGLE_REFRESH_TOKEN={{refresh token}}
-```
+    ```sh
+    export GOOGLE_REFRESH_TOKEN={{refresh token}}
+    ```
