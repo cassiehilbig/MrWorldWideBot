@@ -47,7 +47,7 @@ def prepare_env(project=None):
     with open('app.yaml', 'r+') as app_file:
         text = app_file.read()
         if project is not None:
-            text = re.sub('application:.*', 'application: {}'.format(project, text))
+            text = re.sub('application:.*', 'application: {}'.format(project), text)
         for arg in ALL_CONFIGS:
             if arg not in text:
                 raise Exception('{} not found in app.yaml file'.format(arg))
