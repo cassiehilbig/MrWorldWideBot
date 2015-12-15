@@ -29,7 +29,7 @@ You might get the error
 In which case run:
 
 ```sh
-echo "[install]"\n"prefix="\n > ~/.pydistutils.cfg
+printf '%s\n%s\n' '[install]' 'prefix=' > ~/.pydistutils.cfg
 fab install_xlib
 rm ~/.pydistutils.cfg
 fab test
