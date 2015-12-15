@@ -68,14 +68,14 @@ def make_picture_message(pic_url, username, suggested_responses=None, delay=None
     return message
 
 
-def make_video_message(video_id, username, autoplay=False, muted=False, loop=False, suggested_responses=None,
+def make_video_message(video_url, username, autoplay=False, muted=False, loop=False, suggested_responses=None,
                        delay=None, attribution='gallery'):
     """
     https://engine.kik.com/#/docs/messaging#video
     """
     message = _make_sr_message(MessageType.VIDEO, username, delay, suggested_responses)
     message.update({
-        'videoId': video_id,
+        'videoUrl': video_url,
         'muted': muted,
         'loop': loop,
         'autoplay': autoplay
@@ -87,11 +87,11 @@ def make_video_message(video_id, username, autoplay=False, muted=False, loop=Fal
     return message
 
 
-def make_gif_message(video_id, username, suggested_responses=None, delay=None, attribution='gallery'):
+def make_gif_message(video_url, username, suggested_responses=None, delay=None, attribution='gallery'):
     """
     :return: A video message that has been pre-formatted such that it behaves like a gif message.
     """
-    return make_video_message(video_id, username, autoplay=True, muted=True, loop=True,
+    return make_video_message(video_url, username, autoplay=True, muted=True, loop=True,
                               suggested_responses=suggested_responses, delay=delay, attribution=attribution)
 
 

@@ -8,12 +8,13 @@ class StateMachine(object):
     """
     The StateMachine class handles sending messages into the states defined by client logic.
     """
-    def __init__(self, default_state):
+    def __init__(self, default_state, persistence_strategy=None):
         super(StateMachine, self).__init__()
         self._states = {}
         self._global_interceptors = []
         self._default_state = default_state
         self.register_state(self._default_state)
+        self.persistence_strategy = persistence_strategy
 
     def register_state(self, state):
         self._states[state.type()] = state
@@ -33,12 +34,19 @@ class StateMachine(object):
         """
         self._global_interceptors.append(fn)
 
-    def handle_message(self, user, message):
+    def handle_message(self, username, message):
         """
         Get a message from the chat engine, process it, and return the results.
         :param message: The incoming message in json format
         :return: A list of valid Chat Engine messages that can be sent to the user via the Chat Engine API.
         """
+        if self.persistence_strategy is None:
+            raise AssertionError('persistence_strategy must be set for state_machine')
+
+        user = self.persistence_strategy.get_or_create(username)
+        if user is None:
+            raise AssertionError('A user must be returned by the persistence_strategy')
+
         for fn in self._global_interceptors:
             if fn(user, message):
                 break
@@ -47,12 +55,14 @@ class StateMachine(object):
 
         transition = state.on_message(message)
         if not isinstance(transition, Transition):
-            raise ValueError('State.enter() must return a Transition object.')
+            raise ValueError('State.on_message() must return a Transition object.')
 
         messages = self.handle_transition(user, transition)
         user_next_state = self._get_user_current_state(user)
-        if isinstance(user_next_state, KeywordState) and user_next_state.suggested_responses:
+        if isinstance(user_next_state, KeywordState) and user_next_state.suggested_responses and messages:
             messages[-1]['suggestedResponses'] = user_next_state.suggested_responses
+
+        self.persistence_strategy.put(username, user)
 
         return messages
 
@@ -61,28 +71,36 @@ class StateMachine(object):
         Handle a transition that was returned by a state. May need to recurse through itself in the event that a state's
         fallback requests that it transitions to a different state from the fallback.
         """
+        states = self.persistence_strategy.get_states(user)
         if isinstance(transition, PopTransition):
-            user.states.pop()
+            states.pop()
+            self.persistence_strategy.set_states(user, states)
             entering_state = self._get_user_current_state(user)
             fallback = entering_state.on_resume()
             if fallback:
                 fallback.messages = transition.messages + fallback.messages
                 return self.handle_transition(user, fallback)
         elif isinstance(transition, StackTransition):
-            user.states.append(transition.next_state)
+            states = self.persistence_strategy.get_states(user)
+            states.append(transition.next_state)
+            self.persistence_strategy.set_states(user, states)
         elif isinstance(transition, LambdaTransition):
             pass
         elif isinstance(transition, Transition):
-            user.states[-1] = transition.next_state
+            states = self.persistence_strategy.get_states(user)
+            states[-1] = transition.next_state
+            self.persistence_strategy.set_states(user, states)
         else:
             raise ValueError('StateMachine.handle_transition called with non Transition entity.')
 
         return transition.messages
 
     def _get_user_current_state(self, user):
-        if not user.states:
-            user.states = [self._default_state.type()]
-        state_name = user.states[-1]
+        states = self.persistence_strategy.get_states(user)
+        if not states:
+            states = [self._default_state.type()]
+            self.persistence_strategy.set_states(user, states)
+        state_name = states[-1]
         state = self.get_state(state_name)
 
         return state(user)

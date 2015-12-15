@@ -5,7 +5,6 @@ import requests
 KIK_BOT_SERVER_FORMAT = 'https://engine.apikik.com/api/v1/{}'
 KIK_BOT_MESSAGING_URL = KIK_BOT_SERVER_FORMAT.format('message')
 KIK_BOT_USER_PROFILE_FORMAT = KIK_BOT_SERVER_FORMAT.format('user/{username}')
-KIK_BOT_VIDEO_UPLOAD_URL = KIK_BOT_SERVER_FORMAT.format('video')
 
 KIK_CODE_CREATION_URL = 'https://remote-scancode.kik.com/api/v1/codes'
 KIK_CODE_RETRIEVAL_FORMAT = 'https://scancode.kik.com/api/v1/images/remote/{code_id}/{size}x{size}.png{color_query}'
@@ -42,10 +41,6 @@ class SendMessagesError(KikError):
 
 
 class UserProfileError(KikError):
-    pass
-
-
-class VideoUploadError(KikError):
     pass
 
 
@@ -99,34 +94,6 @@ def get_user_profile(username, bot_name, bot_api_key):
 
     if response.status_code != 200:
         raise UserProfileError('Failed to get user profile from engine.apikik.com. ({}) - {}'.format(
-            response.status_code, response.content
-        ))
-
-    return json.loads(response.content)
-
-
-def create_video(public_video_url, bot_name, bot_api_key):
-    """
-    Create a video for sending in a message.
-    :param public_video_url: A publicly accessible video url that will be re-hosted for public access as described in
-    https://engine.kik.com/#/docs/messaging#uploading-videos
-    :param bot_name: The name of the bot that is uploading the video.
-    :param bot_api_key: The api key of the bot that is uploading the video.
-    :return: The response from engine.apikik.com.
-    :raises VideoUploadError: if there is an error uploading the video.
-    """
-    response = requests.post(
-        KIK_BOT_VIDEO_UPLOAD_URL,
-        auth=(bot_name, bot_api_key),
-        timeout=60,
-        headers={
-            'Content-Type': 'application/json'
-        },
-        data=json.dumps({'videoUrl': public_video_url})
-    )
-
-    if response.status_code != 200:
-        raise VideoUploadError('Error uploading video to engine.apikik.com. ({}) - {}'.format(
             response.status_code, response.content
         ))
 
