@@ -6,34 +6,34 @@ Use this repository to start building a bot based on Google App Engine.
 
 1. Get [Homebrew](http://brew.sh/):
 
-```sh
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
+    ```sh
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    ```
 
 2. Fork this project.
 
-2. In the project's root directory, run:
+3. In the project's root directory, run:
 
-```sh
-./setup.mac.sh
-fab install_xlib
-fab test
-```
+    ```sh
+    ./setup.mac.sh
+    fab install_xlib
+    fab test
+    ```
 
-You might get the error
+    You might get the error
 
-> DistutilsOptionError: must supply either home or prefix/exec-prefix -- not both
->
-> Fatal error: local() encountered an error (return code 2) while executing 'pip install --upgrade --no-deps --requirement requirements_xlib.txt -t xlib'
+    > DistutilsOptionError: must supply either home or prefix/exec-prefix -- not both
+    >
+    > Fatal error: local() encountered an error (return code 2) while executing 'pip install --upgrade --no-deps --requirement requirements_xlib.txt -t xlib'
 
-In which case run:
+    In which case run:
 
-```sh
-echo "[install]"\n"prefix="\n > ~/.pydistutils.cfg
-fab install_xlib
-rm ~/.pydistutils.cfg
-fab test
-```
+    ```sh
+    printf '%s\n%s\n' '[install]' 'prefix=' > ~/.pydistutils.cfg
+    fab install_xlib
+    rm ~/.pydistutils.cfg
+    fab test
+    ```
 
 ## Setting up your bot
 
@@ -80,22 +80,22 @@ fab test
 
 2. Export your project id for the deploy command to use:
 
-```sh
-export GOOGLE_PROJECT_ID={{project id}}
-```
+    ```sh
+    export GOOGLE_PROJECT_ID={{project id}}
+    ```
 
 3. Do an initial deploy. You will need to login through your Google account that is linked to the application.
 
-```sh
-fab deploy
-```
+    ```sh
+    fab deploy
+    ```
 
-The deploy command will modify some files to prepare them for deployment. Do not check in these changes.
+    The deploy command will modify some files to prepare them for deployment. Do not check in these changes.
 
-(For automated deploys)
+    (For automated deploys)
 
 4. The deploy command should output your refresh token. Add this to the environment to have automated deploys using `fab deploy`.
 
-```sh
-export GOOGLE_REFRESH_TOKEN={{refresh token}}
-```
+    ```sh
+    export GOOGLE_REFRESH_TOKEN={{refresh token}}
+    ```

@@ -24,7 +24,7 @@ class MenuStateTest(ExampleBotTestBase):
         }
         self.bot_call([incoming_message], [outgoing_message])
 
-        self.assertEqual(BotUser.get_by_id('remi').states, [DefaultState.type(), MenuState.type()])
+        self.assertEqual(BotUser.get_by_id('remi').states, [MenuState.type()])
 
     @mock.patch('lib.states.default_state.get_user_profile', return_value={'firstName': 'Rems'})
     def test_stack_existing_user(self, get_user_profile):
@@ -39,4 +39,4 @@ class MenuStateTest(ExampleBotTestBase):
         }
         self.bot_call([incoming_message], [outgoing_message])
 
-        self.assertEqual(BotUser.get_by_id('remi').states, [DefaultState.type(), MenuState.type()])
+        self.assertEqual(BotUser.get_by_id('remi').states, [MenuState.type()])
