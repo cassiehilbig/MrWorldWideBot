@@ -9,7 +9,6 @@ from lib.utils import generate_signature, partition, error_response
 from lib.decorators import require_params
 from lib.bot_state_machine import state_machine
 from kik.api import send_messages
-from model import BotUser
 from app import app
 
 
@@ -40,10 +39,7 @@ def incoming():
 
     logging.debug('Processing message: {}'.format(message))
 
-    user = BotUser.get_or_create(message['from'])
-    outgoing_messages = state_machine.handle_message(user, message)
-
-    user.put()
+    outgoing_messages = state_machine.handle_message(message['from'], message)
 
     send_messages(outgoing_messages, bot_name=Config.BOT_USERNAME, bot_api_key=Config.BOT_API_KEY)
 

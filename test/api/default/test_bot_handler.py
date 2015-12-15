@@ -3,7 +3,6 @@ import mock
 
 from test.test_base import TestBase
 from lib.utils import generate_signature
-from model import BotUser
 from config import Config
 
 
@@ -122,10 +121,8 @@ class IncomingMessageTaskTest(TestBase):
             'message': message
         })
 
-        self.assertIsNotNone(BotUser.get_by_id('someone'))
-
         self.assertEqual(handle_message.call_count, 1)
-        self.assertEqual(handle_message.call_args[0][0], BotUser.get_by_id('someone'))
+        self.assertEqual(handle_message.call_args[0][0], 'someone')
         self.assertEqual(handle_message.call_args[0][1], message)
 
         self.assertEqual(send_messages.call_count, 1)
