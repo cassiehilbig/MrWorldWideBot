@@ -80,19 +80,19 @@ fab test
 
 2. Export your project id for the deploy command to use:
 
-```sh
-export GOOGLE_PROJECT_ID={{project id}}
-```
+    ```sh
+    export GOOGLE_PROJECT_ID={{project id}}
+    ```
 
 3. Do an initial deploy. You will need to login through your Google account that is linked to the application.
 
-```sh
-fab deploy
-```
+    ```sh
+    fab deploy
+    ```
 
-The deploy command will modify some files to prepare them for deployment. Do not check in these changes.
+    The deploy command will modify some files to prepare them for deployment. Do not check in these changes.
 
-(For automated deploys)
+    (For automated deploys)
 
 4. The deploy command should output your refresh token. Add this to the environment to have automated deploys using `fab deploy`.
 
