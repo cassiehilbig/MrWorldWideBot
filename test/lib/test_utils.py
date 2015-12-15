@@ -6,14 +6,6 @@ from test.test_base import TestBase
 
 
 class UtilsTest(TestBase):
-    def test_server_url_none(self):
-        self.assertEqual(server_url(), 'http://localhost:8080')
-
-    @mock.patch('lib.utils.is_debug', return_value=False)
-    def test_server_url_production(self, is_debug):
-        self.assertEqual(server_url(), 'https://bot-dashboard.appspot.com')
-        self.assertTrue(is_debug.called)
-
     def test_partition_empty_list(self):
         self.assertListEqual(partition([], 5), [])
 
