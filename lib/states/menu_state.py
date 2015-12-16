@@ -1,6 +1,7 @@
-from lib.state_machine import KeywordState, keyword_response, LambdaTransition, StackTransition
-from lib.states.state_types import StateTypes
 from kik.messages import make_text_message
+from kik.state_machine import KeywordState, keyword_response, LambdaTransition, StackTransition
+
+from lib.states.state_types import StateTypes
 
 
 class MenuStateStrings(object):

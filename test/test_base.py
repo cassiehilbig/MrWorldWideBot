@@ -34,7 +34,6 @@ class TestBase(TestCase):
         self.testbed.init_memcache_stub()
         self.testbed.init_datastore_v3_stub(root_path=self.ROOT_PATH, consistency_policy=self.policy)
         self.testbed.init_user_stub()
-        self.testbed.init_images_stub()
         self.testbed.init_logservice_stub()
         self.testbed.init_channel_stub()
         self.testbed.init_blobstore_stub()
