@@ -13,12 +13,6 @@ def generate_signature(api_token, req_body):
     return base64.b16encode(hmac.new(str(api_token), req_body, hashlib.sha1).digest())
 
 
-def server_url():
-    scheme = 'https' if not is_debug() else 'http'
-    hostname = 'localhost:8080' if is_debug() else 'bot-dashboard.appspot.com'
-    return '{}://{}'.format(scheme, hostname)
-
-
 def partition(lst, size):
     """
     Partition a list into equally sized sub-lists, except the last sub-list, which may be smaller if the length
