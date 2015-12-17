@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from lib.datetime_utils import datetime_to_utc_timestamp, datetime_to_utc_timestamp_millis, datetime_to_csv_format
 from test.test_base import TestBase
+from lib.datetime_utils import datetime_to_utc_timestamp, datetime_to_utc_timestamp_millis, datetime_to_csv_format
 
 
 class DatetimeUtilsTest(TestBase):
