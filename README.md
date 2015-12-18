@@ -50,6 +50,8 @@ export BOT_API_KEY={{api key}}
 
 ## Running the debug server
 
+In a different terminal window/tab:
+
 ```sh
 ngrok 8080
 ```
