@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from google.appengine.ext import ndb
 
 from lib.datetime_utils import datetime_to_utc_timestamp_millis

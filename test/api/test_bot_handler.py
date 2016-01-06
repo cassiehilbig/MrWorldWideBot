@@ -2,8 +2,8 @@ import json
 import mock
 
 from test.test_base import TestBase
-from lib.utils import generate_signature
 from config import Config
+from lib.utils import generate_signature
 
 
 class BotHandlerTest(TestBase):

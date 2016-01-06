@@ -1,7 +1,7 @@
 import json
 
-from lib.utils import partition, error_response
 from test.test_base import TestBase
+from lib.utils import partition, error_response
 
 
 class UtilsTest(TestBase):
