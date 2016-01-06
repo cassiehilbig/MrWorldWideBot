@@ -113,7 +113,7 @@ class IncomingMessageTaskTest(TestBase):
     def test_no_message_param_silent_failure_if_task(self):
         self.api_call('post', '/tasks/incoming', headers=self.headers, status=200)
 
-    @mock.patch('api.default.bot_handler.send_messages')
+    @mock.patch('api.bot_handler.send_messages')
     @mock.patch('lib.bot_state_machine.state_machine.handle_message', return_value=['somemessage'])
     def test_success(self, handle_message, send_messages):
         message = {'from': 'someone'}
