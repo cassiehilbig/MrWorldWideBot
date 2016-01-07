@@ -16,7 +16,7 @@ def install_xlib(reinstall=False):
     if reinstall:
         local('rm -rf xlib/*')
     local('printf \'%s\n%s\n\' \'[install]\' \'prefix=\' > ~/.pydistutils.cfg')
-    local('pip install --upgrade --no-deps --requirement requirements_xlib.txt -t xlib')
+    local('pip install --upgrade --no-deps --requirement requirements.xlib.txt -t xlib')
     local('rm ~/.pydistutils.cfg')
     local('rm -rf xlib/*.egg-info xlib/*.dist-info xlib/VERSION xlib/*.pth')
 
