@@ -66,7 +66,7 @@ def debug():
     install()
     install_xlib()
     prepare_env()
-    local('dev_appserver.py --host 0.0.0.0 --log_level debug app.yaml')
+    local('dev_appserver.py --host 0.0.0.0 --log_level debug .')
 
 
 def deploy():
@@ -87,6 +87,3 @@ def deploy():
             print magenta('Please have it in the environment using: '.format(refresh_token))
             print magenta('export {}={}'.format(REFRESH_TOKEN_NAME, refresh_token))
     local('appcfg.py update . --oauth2_refresh_token {}'.format(refresh_token))
-    local('appcfg.py update_queues . --oauth2_refresh_token {}'.format(refresh_token))
-    local('appcfg.py update_indexes . --oauth2_refresh_token {}'.format(refresh_token))
-    local('appcfg.py update_cron . --oauth2_refresh_token {}'.format(refresh_token))
