@@ -1,15 +1,15 @@
 import json
 
-from google.appengine.api import taskqueue
 from flask import request
+from google.appengine.api import taskqueue
+from kik.api import send_messages
 
+from app import app
 from config import Config
 from lib import logging
-from lib.utils import generate_signature, partition, error_response
-from lib.decorators import require_params
 from lib.bot_state_machine import state_machine
-from kik.api import send_messages
-from app import app
+from lib.decorators import require_params
+from lib.utils import generate_signature, partition, error_response
 
 
 @app.route('/receive', methods=['POST'])

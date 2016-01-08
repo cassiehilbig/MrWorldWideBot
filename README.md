@@ -14,21 +14,6 @@ Use this repository to start building a bot based on Google App Engine.
     fab test
     ```
 
-    You might get the error
-
-    > DistutilsOptionError: must supply either home or prefix/exec-prefix -- not both
-    >
-    > Fatal error: local() encountered an error (return code 2) while executing 'pip install --upgrade --no-deps --requirement requirements_xlib.txt -t xlib'
-
-    In which case run:
-
-    ```sh
-    printf '%s\n%s\n' '[install]' 'prefix=' > ~/.pydistutils.cfg
-    fab install_xlib
-    rm ~/.pydistutils.cfg
-    fab test
-    ```
-
 ## Setting up your bot
 
 1. Go to the [Bot Dashboard](https://engine.kik.com) and scan the Kik Code to create a new bot.
