@@ -4,15 +4,9 @@ Use this repository to start building a bot based on Google App Engine.
 
 ## Prerequisites (Mac)
 
-1. Get [Homebrew](http://brew.sh/):
+1. Fork this project.
 
-    ```sh
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    ```
-
-2. Fork this project.
-
-3. In the project's root directory, run:
+2. In the project's root directory, run:
 
     ```sh
     ./setup.mac.sh
