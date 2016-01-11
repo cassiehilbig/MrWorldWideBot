@@ -8,6 +8,9 @@ fi
 brew update
 brew upgrade
 
-brew install git python app-engine-python ngrok
+brew tap caskroom/cask
+
+brew install git python app-engine-python
+brew cask install ngrok
 
 pip install --upgrade --quiet --requirement requirements.txt

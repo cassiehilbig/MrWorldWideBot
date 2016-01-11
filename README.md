@@ -29,8 +29,10 @@ export BOT_API_KEY={{api key}}
 
 ## Running the debug server
 
+In a different terminal window/tab:
+
 ```sh
-ngrok 8080
+ngrok http 8080
 ```
 This will create a public tunnel to your local environment. Copy the URL that starts with `https`.
 
