@@ -4,15 +4,9 @@ Use this repository to start building a bot based on Google App Engine.
 
 ## Prerequisites (Mac)
 
-1. Get [Homebrew](http://brew.sh/):
+1. Fork this project.
 
-    ```sh
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    ```
-
-2. Fork this project.
-
-3. In the project's root directory, run:
+2. In the project's root directory, run:
 
     ```sh
     ./setup.mac.sh
@@ -35,8 +29,10 @@ export BOT_API_KEY={{api key}}
 
 ## Running the debug server
 
+In a different terminal window/tab:
+
 ```sh
-ngrok 8080
+ngrok http 8080
 ```
 This will create a public tunnel to your local environment. Copy the URL that starts with `https`.
 
