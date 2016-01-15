@@ -41,6 +41,7 @@ def incoming():
 
     outgoing_messages = state_machine.handle_message(message['from'], message)
 
-    send_messages(outgoing_messages, bot_name=Config.BOT_USERNAME, bot_api_key=Config.BOT_API_KEY)
+    if len(outgoing_messages) > 0:
+        send_messages(outgoing_messages, bot_name=Config.BOT_USERNAME, bot_api_key=Config.BOT_API_KEY)
 
     return '', 200

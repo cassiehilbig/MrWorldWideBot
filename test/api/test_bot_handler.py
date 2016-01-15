@@ -129,3 +129,17 @@ class IncomingMessageTaskTest(TestBase):
         self.assertEqual(send_messages.call_args[0][0], ['somemessage'])
         self.assertEqual(send_messages.call_args[1]['bot_name'], Config.BOT_USERNAME)
         self.assertEqual(send_messages.call_args[1]['bot_api_key'], Config.BOT_API_KEY)
+
+    @mock.patch('api.bot_handler.send_messages')
+    @mock.patch('lib.bot_state_machine.state_machine.handle_message', return_value=[])
+    def test_success_no_messages(self, handle_message, send_messages):
+        message = {'from': 'someone'}
+        self.api_call('post', '/tasks/incoming', data={
+            'message': message
+        })
+
+        self.assertEqual(handle_message.call_count, 1)
+        self.assertEqual(handle_message.call_args[0][0], 'someone')
+        self.assertEqual(handle_message.call_args[0][1], message)
+
+        self.assertEqual(send_messages.call_count, 0)
