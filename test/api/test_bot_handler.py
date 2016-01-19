@@ -4,6 +4,7 @@ import mock
 from test.test_base import TestBase
 from config import Config
 from lib.utils import generate_signature
+from api.bot_handler import IGNORED_MESSAGE_TYPES
 
 
 class BotHandlerTest(TestBase):
@@ -46,8 +47,19 @@ class BotHandlerTest(TestBase):
         self.assertEqual(queue.call_count, 0)
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
+    def test_data_messages_transient(self, queue):
+        body = json.dumps({
+            'messages': [{'type': t} for t in IGNORED_MESSAGE_TYPES]
+        })
+        self.api_call('post', '/receive', headers={
+            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
+        }, data=body, status=200)
+
+        self.assertEqual(queue.call_count, 0)
+
+    @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
     def test_data_messages_one(self, queue):
-        message = {'foo': 'bar'}
+        message = {'type': 'bar'}
         body = json.dumps({
             'messages': [message]
         })
@@ -68,8 +80,8 @@ class BotHandlerTest(TestBase):
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
     def test_data_messages_partition(self, queue):
-        message0 = {'foo': 'bar'}
-        message1 = {'baz': 'yolo'}
+        message0 = {'type': 'bar'}
+        message1 = {'type': 'yolo'}
 
         body = json.dumps({
             'messages': [message0] * Config.MAX_TASKQUEUE_BATCH_SIZE + [message1]
