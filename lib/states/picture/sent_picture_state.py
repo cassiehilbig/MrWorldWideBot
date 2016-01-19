@@ -16,4 +16,4 @@ class SentPictureState(State):
         return StateTypes.SENT_PICTURE
 
     def on_message(self, message):
-        return PopTransition([make_text_message(SentPictureStrings.SENT_PICTURE_MESSAGE, self.user.id)])
+        return PopTransition([make_text_message(self.user.id, SentPictureStrings.SENT_PICTURE_MESSAGE)])

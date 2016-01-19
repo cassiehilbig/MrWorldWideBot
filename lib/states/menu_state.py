@@ -20,16 +20,16 @@ class MenuState(KeywordState):
     @keyword_response('Color', 'colour')
     def handle_color(self, message):
         return StackTransition(
-            [make_text_message(MenuStateStrings.COLOR_MESSAGE, self.user.id)],
+            [make_text_message(self.user.id, MenuStateStrings.COLOR_MESSAGE)],
             StateTypes.CHOOSE_COLOR
         )
 
     @keyword_response('Do nothing', 'nothing')
     def handle_nothing(self, message):
-        return LambdaTransition([make_text_message(MenuStateStrings.NOTHING_MESSAGE, self.user.id)])
+        return LambdaTransition([make_text_message(self.user.id, MenuStateStrings.NOTHING_MESSAGE)])
 
     def handle_unmatched(self, message):
-        return LambdaTransition([make_text_message(MenuStateStrings.CONFUSED_MESSAGE, self.user.id)])
+        return LambdaTransition([make_text_message(self.user.id, MenuStateStrings.CONFUSED_MESSAGE)])
 
     def on_resume(self):
-        return LambdaTransition([make_text_message(MenuStateStrings.RESUME_MESSAGE, self.user.id)])
+        return LambdaTransition([make_text_message(self.user.id, MenuStateStrings.RESUME_MESSAGE)])
