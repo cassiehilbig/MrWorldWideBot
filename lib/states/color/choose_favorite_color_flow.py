@@ -33,25 +33,25 @@ class ChooseColorState(KeywordState):
 
     @keyword_response('Cancel', 'back')
     def handle_cancel(self, message):
-        return PopTransition([make_text_message(ChooseFavoriteColorStrings.CANCEL_MESSAGE, self.user.id)])
+        return PopTransition([make_text_message(self.user.id, ChooseFavoriteColorStrings.CANCEL_MESSAGE)])
 
     def handle_unmatched(self, message):
         if message['type'] != MessageType.TEXT:
-            return LambdaTransition([make_text_message(ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE, self.user.id)])
+            return LambdaTransition([make_text_message(self.user.id, ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE)])
 
         lower_colors = [c.lower() for c in COLORS]
         pick = message['body'].strip().lower()
 
         if pick not in lower_colors:
-            return LambdaTransition([make_text_message(ChooseFavoriteColorStrings.UNKNOWN_COLOR, self.user.id)])
+            return LambdaTransition([make_text_message(self.user.id, ChooseFavoriteColorStrings.UNKNOWN_COLOR)])
 
         self.user.get_state_data(ConfirmColorState.type())['color'] = pick
 
         message = ChooseFavoriteColorStrings.CONFIRM_COLOR.format(color=pick)
-        return Transition([make_text_message(message, self.user.id)], ConfirmColorState.type())
+        return Transition([make_text_message(self.user.id, message)], ConfirmColorState.type())
 
     def on_resume(self):
-        return LambdaTransition([make_text_message(ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE, self.user.id)])
+        return LambdaTransition([make_text_message(self.user.id, ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE)])
 
 
 class ConfirmColorState(ConfirmationState):
@@ -66,13 +66,13 @@ class ConfirmColorState(ConfirmationState):
         self.user.clear_current_state_data()
 
         m = ChooseFavoriteColorStrings.CONFIRMED_COLOR.format(color=color)
-        return PopTransition([make_text_message(m, self.user.id)])
+        return PopTransition([make_text_message(self.user.id, m)])
 
     def handle_negative_response(self, message):
         self.user.clear_current_state_data()
 
         return Transition([
-            make_text_message(ChooseFavoriteColorStrings.CONFIRMATION_CANCELLED, self.user.id)],
+            make_text_message(self.user.id, ChooseFavoriteColorStrings.CONFIRMATION_CANCELLED)],
             ChooseColorState.type()
         )
 
@@ -80,10 +80,10 @@ class ConfirmColorState(ConfirmationState):
         color = self.user.current_state_data()['color']
         m = ChooseFavoriteColorStrings.CONFIRMATION_CONFUSED.format(color=color)
 
-        return LambdaTransition([make_text_message(m, self.user.id)])
+        return LambdaTransition([make_text_message(self.user.id, m)])
 
     def on_resume(self):
         color = self.user.current_state_data()['color']
         m = ChooseFavoriteColorStrings.CONFIRMATION_CONFUSED.format(color=color)
 
-        return LambdaTransition([make_text_message(m, self.user.id)])
+        return LambdaTransition([make_text_message(self.user.id, m)])
