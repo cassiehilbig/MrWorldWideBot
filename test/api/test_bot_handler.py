@@ -21,13 +21,13 @@ class BotHandlerTest(TestBase):
             'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=400)
 
-    def test_data_no_messages(self):
+    def test_no_messages(self):
         body = json.dumps({})
         self.api_call('post', '/receive', headers={
             'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=400)
 
-    def test_data_messages_not_list(self):
+    def test_messages_not_list(self):
         body = json.dumps({
             'messages': 'yolo'
         })
@@ -36,7 +36,7 @@ class BotHandlerTest(TestBase):
         }, data=body, status=400)
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
-    def test_data_messages_empty(self, queue):
+    def test_zero_messages(self, queue):
         body = json.dumps({
             'messages': []
         })
@@ -47,7 +47,7 @@ class BotHandlerTest(TestBase):
         self.assertEqual(queue.call_count, 0)
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
-    def test_data_messages_transient(self, queue):
+    def test_messages_transient(self, queue):
         body = json.dumps({
             'messages': [{'type': t} for t in IGNORED_MESSAGE_TYPES]
         })
@@ -58,7 +58,7 @@ class BotHandlerTest(TestBase):
         self.assertEqual(queue.call_count, 0)
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
-    def test_data_messages_one(self, queue):
+    def test_one_messages(self, queue):
         message = {'type': 'bar'}
         body = json.dumps({
             'messages': [message]
@@ -79,7 +79,7 @@ class BotHandlerTest(TestBase):
         self.assertEqual(json.loads(tasks[0].payload), {'message': message})
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
-    def test_data_messages_partition(self, queue):
+    def test_batch_messages(self, queue):
         message0 = {'type': 'bar'}
         message1 = {'type': 'yolo'}
 
