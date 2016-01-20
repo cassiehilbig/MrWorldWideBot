@@ -58,7 +58,7 @@ class BotHandlerTest(TestBase):
         self.assertEqual(queue.call_count, 0)
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
-    def test_one_messages(self, queue):
+    def test_one_message(self, queue):
         message = {'type': 'bar'}
         body = json.dumps({
             'messages': [message]
