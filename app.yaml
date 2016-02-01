@@ -8,12 +8,17 @@ handlers:
 - url: /web
   static_dir: web
 
+- url: /tasks/*
+  script: app.app
+  login: admin
+
 - url: .*
   script: app.app
 
 env_variables:
   BOT_USERNAME: 'your-bot-username-here'
   BOT_API_KEY: 'your-api-key-here'
+  MIXPANEL_TOKEN: ''
 
 libraries:
 - name: ssl

@@ -10,3 +10,6 @@ class Config:
 
     BOT_USERNAME = os.environ['BOT_USERNAME']
     BOT_API_KEY = os.environ['BOT_API_KEY']
+
+    # Uses get so you can choose not to use it
+    MIXPANEL_TOKEN = os.environ.get('MIXPANEL_TOKEN')

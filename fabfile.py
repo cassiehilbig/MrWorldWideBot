@@ -8,7 +8,7 @@ from fabric.colors import magenta
 PROJECT_ID_NAME = 'GOOGLE_PROJECT_ID'
 REFRESH_TOKEN_NAME = 'GOOGLE_REFRESH_TOKEN'
 
-ALL_CONFIGS = frozenset(['BOT_USERNAME', 'BOT_API_KEY'])
+ALL_CONFIGS = frozenset(['BOT_USERNAME', 'BOT_API_KEY', 'MIXPANEL_TOKEN'])
 
 
 @runs_once
