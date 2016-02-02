@@ -33,12 +33,14 @@ def lint():
 
 def test():
     install()
+    install_xlib()
     lint()
     local('python -m multitest discover -v -t . -s test')
 
 
 def coverage():
     install()
+    install_xlib()
     local('coverage run -m multitest discover -t . -s test 2> /dev/null')
     local('coverage combine')
     local('coverage report -m')

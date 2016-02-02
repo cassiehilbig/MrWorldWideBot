@@ -10,7 +10,6 @@ Use this repository to start building a bot based on Google App Engine.
 
     ```sh
     ./setup.mac.sh
-    fab install_xlib
     fab test
     ```
 
