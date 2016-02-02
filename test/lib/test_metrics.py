@@ -1,8 +1,9 @@
 import json
 
 from test.test_base import TestBase
-from model.bot_user import BotUser
 from config import Config
+import lib.metrics
+from model.bot_user import BotUser
 
 
 class MetricsTest(TestBase):
@@ -18,11 +19,11 @@ class MetricsTest(TestBase):
     def test_track_with_state(self):
         Config.MIXPANEL_TOKEN = 'test'
 
-        from lib.metrics import track  # Have to import after the token is set
+        reload(lib.metrics)  # Have to reload after the token is set
 
         user = BotUser(id='testuser', states=['first-state', 'second-state'])
 
-        track(user, 'A Test Event', {'foo': 'bar'})
+        lib.metrics.track(user, 'A Test Event', {'foo': 'bar'})
 
         tasks = self.get_tasks('mixpanel')
         data = tasks[0].payload
@@ -36,11 +37,11 @@ class MetricsTest(TestBase):
     def test_track_without_state(self):
         Config.MIXPANEL_TOKEN = 'test'
 
-        from lib.metrics import track  # Have to import after the token is set
+        reload(lib.metrics)  # Have to reload after the token is set
 
         user = BotUser(id='testuser')
 
-        track(user, 'A Test Event', {'foo': 'bar'})
+        lib.metrics.track(user, 'A Test Event', {'foo': 'bar'})
 
         tasks = self.get_tasks('mixpanel')
         data = tasks[0].payload
