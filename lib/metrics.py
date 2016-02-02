@@ -13,7 +13,7 @@ class EnqueuingConsumer(object):
                       payload=json.dumps({'endpoint': endpoint, 'data': json_message}))
 
 
-_mp = Mixpanel(Config.MIXPANEL_TOKEN, EnqueuingConsumer())
+_mp = None
 
 
 def track(user, metric, data, **kwargs):
@@ -25,6 +25,10 @@ def track(user, metric, data, **kwargs):
     :param data: A dictionary containing additional properties associated with this event
     :param kwargs: Additional arguments that will be passed through to Mixpanel's track function
     """
+    global _mp
+
+    if _mp is None:
+        _mp = Mixpanel(Config.MIXPANEL_TOKEN, EnqueuingConsumer())
     if user.states:
         data['state'] = user.states[-1]
 

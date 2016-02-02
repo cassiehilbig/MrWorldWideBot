@@ -11,6 +11,7 @@ class MetricsTest(TestBase):
     def setUp(self):
         super(self.__class__, self).setUp()
         self.old_mixpanel_token = Config.MIXPANEL_TOKEN
+        lib.metrics._mp = None
 
     def tearDown(self):
         super(self.__class__, self).tearDown()
@@ -18,8 +19,6 @@ class MetricsTest(TestBase):
 
     def test_track_with_state(self):
         Config.MIXPANEL_TOKEN = 'test'
-
-        reload(lib.metrics)  # Have to reload after the token is set
 
         user = BotUser(id='testuser', states=['first-state', 'second-state'])
 
@@ -36,8 +35,6 @@ class MetricsTest(TestBase):
 
     def test_track_without_state(self):
         Config.MIXPANEL_TOKEN = 'test'
-
-        reload(lib.metrics)  # Have to reload after the token is set
 
         user = BotUser(id='testuser')
 
