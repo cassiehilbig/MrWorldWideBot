@@ -38,3 +38,5 @@ class BotTestBase(TestBase):
             if expected_outgoing_messages:
                 self.assertEqual(send_messages.call_count, 1)
                 self.assertEqual(send_messages.call_args[0][0], expected_outgoing_messages)
+            elif expected_outgoing_messages is not None:
+                self.assertEqual(send_messages.call_count, 0)
