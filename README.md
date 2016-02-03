@@ -82,8 +82,8 @@ fab test
 
 ## Using Mixpanel
 
-The starter kit has a built in metrics tracking framework using Mixpanel. To use this functionality you need to set
-your Mixpanel token:
+The starter kit has a built in metrics tracking framework using Mixpanel.
+To use this functionality you need to set your Mixpanel token:
 
 ```sh
 export MIXPANEL_TOKEN={{your mixpanel token}}

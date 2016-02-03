@@ -16,8 +16,8 @@ handlers:
   script: app.app
 
 env_variables:
-  BOT_USERNAME: 'your-bot-username-here'
-  BOT_API_KEY: 'your-api-key-here'
+  BOT_USERNAME: ''
+  BOT_API_KEY: ''
   MIXPANEL_TOKEN: ''
 
 libraries:
