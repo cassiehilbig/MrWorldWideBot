@@ -89,8 +89,8 @@ your Mixpanel token:
 export MIXPANEL_TOKEN={{your mixpanel token}}
 ```
 
-The Mixpanel functionality lives in [lib.metrics](lib/metrics.py). Just import the `track` function, and call it with a `BotUser`, the
-name of the event and a dictionary containing any additional data you want to track.
+The Mixpanel functionality lives in [lib.metrics](lib/metrics.py).
+Just import the `track` function, and call it with a `BotUser`, the name of the event and a dictionary containing any additional data you want to track.
 
 Example
 ```python
