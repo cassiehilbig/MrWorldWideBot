@@ -79,3 +79,22 @@ fab test
     ```sh
     export GOOGLE_REFRESH_TOKEN={{refresh token}}
     ```
+
+## Using Mixpanel
+
+The starter kit has a built in metrics tracking framework using Mixpanel.
+To use this functionality you need to set your Mixpanel token:
+
+```sh
+export MIXPANEL_TOKEN={{your mixpanel token}}
+```
+
+The Mixpanel functionality lives in [lib.metrics](lib/metrics.py).
+Just import the `track` function, and call it with a `BotUser`, the name of the event and a dictionary containing any additional data you want to track.
+
+Example
+```python
+from lib.metrics import track
+
+track(user, 'A Very Important Event', {'Some Property Name': 'somevalue'})
+```

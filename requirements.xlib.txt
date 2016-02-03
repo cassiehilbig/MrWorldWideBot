@@ -5,4 +5,6 @@ Werkzeug==0.11.2
 Jinja2==2.8
 MarkupSafe==0.23
 itsdangerous==0.24
+mixpanel==4.3.0
+six==1.10.0
 kik==0.1.0
