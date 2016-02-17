@@ -13,10 +13,10 @@ from lib.decorators import require_params
 from lib.utils import generate_signature, partition, error_response
 
 
-# Message types that should not be processed.
-# If you choose not to ignore them, you will need to enable them in your Reply Settings on the bot dashboard.
-IGNORED_MESSAGE_TYPES = [MessageType.READ_RECEIPT, MessageType.DELIVERY_RECEIPT, MessageType.IS_TYPING,
-                         MessageType.PUSH_RECEIPT]
+# Message types that should be processed. If you choose to respond to start-chatting messages or receipts, you
+# will need to add them here.
+ALLOWED_MESSAGE_TYPES = [MessageType.TEXT, MessageType.PICTURE, MessageType.VIDEO, MessageType.LINK,
+                         MessageType.STICKER, MessageType.SCAN_DATA]
 
 
 @app.route('/receive', methods=['POST'])
@@ -29,7 +29,7 @@ def receive():
 
     tasks = []
     for message in request.args['messages']:
-        if 'type' in message and message['type'] not in IGNORED_MESSAGE_TYPES:
+        if 'type' in message and message['type'] in ALLOWED_MESSAGE_TYPES:
             tasks.append(taskqueue.Task(
                 url='/tasks/incoming',
                 payload=json.dumps({'message': message})))

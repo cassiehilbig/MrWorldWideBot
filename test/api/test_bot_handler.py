@@ -4,7 +4,7 @@ import mock
 from test.test_base import TestBase
 from config import Config
 from lib.utils import generate_signature
-from api.bot_handler import IGNORED_MESSAGE_TYPES
+from api.bot_handler import ALLOWED_MESSAGE_TYPES
 
 
 class BotHandlerTest(TestBase):
@@ -47,9 +47,29 @@ class BotHandlerTest(TestBase):
         self.assertEqual(queue.call_count, 0)
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
-    def test_messages_transient(self, queue):
+    def test_all_allowed_types(self, queue):
+        messages = {
+            'messages': [{'type': t} for t in ALLOWED_MESSAGE_TYPES]
+        }
+        body = json.dumps(messages)
+        self.api_call('post', '/receive', headers={
+            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
+        }, data=body, status=200)
+
+        self.assertEqual(queue.call_count, 1)
+        self.assertEqual(queue.call_args[0][0], 'incoming')
+
+        self.assertEqual(queue.return_value.add.call_count, 1)
+
+        add = queue.return_value.add
+        tasks = add.call_args[0][0]
+
+        self.assertEqual(len(tasks), len(ALLOWED_MESSAGE_TYPES))
+
+    @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
+    def test_not_allowed_type(self, queue):
         body = json.dumps({
-            'messages': [{'type': t} for t in IGNORED_MESSAGE_TYPES]
+            'messages': [{'type': 'foobarbaz'}]
         })
         self.api_call('post', '/receive', headers={
             'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
@@ -59,7 +79,7 @@ class BotHandlerTest(TestBase):
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
     def test_one_message(self, queue):
-        message = {'type': 'bar'}
+        message = {'type': ALLOWED_MESSAGE_TYPES[0]}
         body = json.dumps({
             'messages': [message]
         })
@@ -80,8 +100,8 @@ class BotHandlerTest(TestBase):
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
     def test_batch_messages(self, queue):
-        message0 = {'type': 'bar'}
-        message1 = {'type': 'yolo'}
+        message0 = {'type': ALLOWED_MESSAGE_TYPES[0]}
+        message1 = {'type': ALLOWED_MESSAGE_TYPES[0]}
 
         body = json.dumps({
             'messages': [message0] * Config.MAX_TASKQUEUE_BATCH_SIZE + [message1]
