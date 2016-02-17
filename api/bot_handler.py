@@ -33,6 +33,8 @@ def receive():
             tasks.append(taskqueue.Task(
                 url='/tasks/incoming',
                 payload=json.dumps({'message': message})))
+        else:
+            logging.info('Ignoring non-whitelisted message of type {}'.format(message['type']))
 
     for batch in partition(tasks, Config.MAX_TASKQUEUE_BATCH_SIZE):
         taskqueue.Queue('incoming').add(batch)
