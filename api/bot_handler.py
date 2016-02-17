@@ -13,8 +13,8 @@ from lib.decorators import require_params
 from lib.utils import generate_signature, partition, error_response
 
 
-# Message types that should be processed. If you choose to respond to start-chatting messages or receipts, you
-# will need to add them here.
+# Message types that should be processed. If you choose to respond to other message types, you will
+# need to add them here
 ALLOWED_MESSAGE_TYPES = [MessageType.TEXT, MessageType.PICTURE, MessageType.VIDEO, MessageType.LINK,
                          MessageType.STICKER, MessageType.SCAN_DATA]
 
