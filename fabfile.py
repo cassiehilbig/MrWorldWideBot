@@ -63,12 +63,13 @@ def prepare_env(project=None):
         app_file.truncate()
 
 
-def debug():
+def debug(clear_datastore=False):
     """Starts up debug server"""
     install()
     install_xlib()
     prepare_env()
-    local('dev_appserver.py --host 0.0.0.0 --log_level debug .')
+    clear_datastore_option = '--clear_datastore=yes' if clear_datastore else ''
+    local('dev_appserver.py --host 0.0.0.0 --log_level debug {} .'.format(clear_datastore_option))
 
 
 def deploy():
