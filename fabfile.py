@@ -64,7 +64,7 @@ def prepare_env(project=None):
 
 
 def debug(clear_datastore=False):
-    """Starts up debug server"""
+    """Starts up debug server. Run with `debug:clear` to clear dev datastore."""
     install()
     install_xlib()
     prepare_env()
