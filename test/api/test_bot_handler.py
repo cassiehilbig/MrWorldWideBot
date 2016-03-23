@@ -1,13 +1,21 @@
+import base64
+import hashlib
+import hmac
 import json
 import mock
 
 from test.test_base import TestBase
+
+from kik import messages
+
 from config import Config
-from lib.utils import generate_signature
-from api.bot_handler import ALLOWED_MESSAGE_TYPES
 
 
 class BotHandlerTest(TestBase):
+
+    @staticmethod
+    def _generate_signature(api_key, body):
+        return base64.b16encode(hmac.new(str(api_key), body, hashlib.sha1).digest())
 
     def test_no_signature(self):
         self.api_call('post', '/receive', status=403)
@@ -18,13 +26,13 @@ class BotHandlerTest(TestBase):
     def test_data_not_json(self):
         body = 'yolo'
         self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
+            'X-Kik-Signature': self._generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=400)
 
     def test_no_messages(self):
         body = json.dumps({})
         self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
+            'X-Kik-Signature': self._generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=400)
 
     def test_messages_not_list(self):
@@ -32,7 +40,7 @@ class BotHandlerTest(TestBase):
             'messages': 'yolo'
         })
         self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
+            'X-Kik-Signature': self._generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=400)
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
@@ -41,50 +49,19 @@ class BotHandlerTest(TestBase):
             'messages': []
         })
         self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
-        }, data=body, status=200)
-
-        self.assertEqual(queue.call_count, 0)
-
-    @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
-    def test_all_allowed_types(self, queue):
-        messages = {
-            'messages': [{'type': t} for t in ALLOWED_MESSAGE_TYPES]
-        }
-        body = json.dumps(messages)
-        self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
-        }, data=body, status=200)
-
-        self.assertEqual(queue.call_count, 1)
-        self.assertEqual(queue.call_args[0][0], 'incoming')
-
-        self.assertEqual(queue.return_value.add.call_count, 1)
-
-        add = queue.return_value.add
-        tasks = add.call_args[0][0]
-
-        self.assertEqual(len(tasks), len(ALLOWED_MESSAGE_TYPES))
-
-    @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
-    def test_not_allowed_type(self, queue):
-        body = json.dumps({
-            'messages': [{'type': 'foobarbaz'}]
-        })
-        self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
+            'X-Kik-Signature': self._generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=200)
 
         self.assertEqual(queue.call_count, 0)
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
     def test_one_message(self, queue):
-        message = {'type': ALLOWED_MESSAGE_TYPES[0]}
+        message = {'type': 'text'}
         body = json.dumps({
             'messages': [message]
         })
         self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
+            'X-Kik-Signature': self._generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=200)
 
         self.assertEqual(queue.call_count, 1)
@@ -100,14 +77,14 @@ class BotHandlerTest(TestBase):
 
     @mock.patch('google.appengine.api.taskqueue.Queue', return_value=mock.MagicMock())
     def test_batch_messages(self, queue):
-        message0 = {'type': ALLOWED_MESSAGE_TYPES[0]}
-        message1 = {'type': ALLOWED_MESSAGE_TYPES[0]}
+        message0 = {'type': 'text'}
+        message1 = {'type': 'text'}
 
         body = json.dumps({
             'messages': [message0] * Config.MAX_TASKQUEUE_BATCH_SIZE + [message1]
         })
         self.api_call('post', '/receive', headers={
-            'X-Kik-Signature': generate_signature(Config.BOT_API_KEY, body)
+            'X-Kik-Signature': self._generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=200)
 
         self.assertEqual(queue.call_count, 2)
@@ -145,33 +122,59 @@ class IncomingMessageTaskTest(TestBase):
     def test_no_message_param_silent_failure_if_task(self):
         self.api_call('post', '/tasks/incoming', headers=self.headers, status=200)
 
-    @mock.patch('api.bot_handler.send_messages')
-    @mock.patch('lib.bot_state_machine.state_machine.handle_message', return_value=['somemessage'])
-    def test_success(self, handle_message, send_messages):
-        message = {'from': 'someone'}
+    @mock.patch('kik.api.MessageApi.send')
+    def test_echoes_text(self, send_messages):
+        message = {
+            'type': 'text',
+            'from': 'someone',
+            'chatId': 'foobarbaz',
+            'body': 'foobar'
+        }
         self.api_call('post', '/tasks/incoming', data={
             'message': message
         })
-
-        self.assertEqual(handle_message.call_count, 1)
-        self.assertEqual(handle_message.call_args[0][0], 'someone')
-        self.assertEqual(handle_message.call_args[0][1], message)
 
         self.assertEqual(send_messages.call_count, 1)
-        self.assertEqual(send_messages.call_args[0][0], ['somemessage'])
-        self.assertEqual(send_messages.call_args[1]['bot_name'], Config.BOT_USERNAME)
-        self.assertEqual(send_messages.call_args[1]['bot_api_key'], Config.BOT_API_KEY)
+        self.assertEqual(len(send_messages.call_args[0][0]), 1)
+        message = send_messages.call_args[0][0][0]
+        self.assertIsInstance(message, messages.TextMessage)
+        self.assertEqual(message.to, 'someone')
+        self.assertEqual(message.chat_id, 'foobarbaz')
+        self.assertEqual(message.body, 'foobar')
 
-    @mock.patch('api.bot_handler.send_messages')
-    @mock.patch('lib.bot_state_machine.state_machine.handle_message', return_value=[])
-    def test_success_no_messages(self, handle_message, send_messages):
-        message = {'from': 'someone'}
+    @mock.patch('kik.api.MessageApi.send')
+    def test_non_text_message(self, send_messages):
+        message = {
+            'type': 'picture',
+            'from': 'someone',
+            'mention': Config.BOT_USERNAME,
+            'chatId': 'foobarbaz',
+            'picUrl': 'http://foo.bar/baz'
+        }
         self.api_call('post', '/tasks/incoming', data={
             'message': message
         })
 
-        self.assertEqual(handle_message.call_count, 1)
-        self.assertEqual(handle_message.call_args[0][0], 'someone')
-        self.assertEqual(handle_message.call_args[0][1], message)
+        self.assertEqual(send_messages.call_count, 1)
+        self.assertEqual(len(send_messages.call_args[0][0]), 1)
+        message = send_messages.call_args[0][0][0]
+        self.assertIsInstance(message, messages.TextMessage)
+        self.assertEqual(message.to, 'someone')
+        self.assertEqual(message.chat_id, 'foobarbaz')
+        self.assertEqual(message.body, 'I\'m just an example bot')
+
+    @mock.patch('kik.api.MessageApi.send')
+    def test_not_allowed_type(self, send_messages):
+        self.api_call('post', '/tasks/incoming', data={
+            'message': {'type': 'unknown-type'}
+        }, status=200)
+
+        self.assertEqual(send_messages.call_count, 0)
+
+    @mock.patch('kik.api.MessageApi.send')
+    def test_mentioning_another_bot(self, send_messages):
+        self.api_call('post', '/tasks/incoming', data={
+            'message': {'type': 'text', 'from': 'foobar', 'mention': 'anotherbot'}
+        }, status=200)
 
         self.assertEqual(send_messages.call_count, 0)

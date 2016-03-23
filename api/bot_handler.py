@@ -2,26 +2,28 @@ import json
 
 from flask import request
 from google.appengine.api import taskqueue
-from kik.api import send_messages
-from kik.messages import MessageType
+from kik import KikApi
+from kik.messages import messages_from_json, TextMessage, PictureMessage, VideoMessage, LinkMessage, \
+    StartChattingMessage, StickerMessage, ScanDataMessage
 
 from app import app
 from config import Config
 from lib import logging
-from lib.bot_state_machine import state_machine
 from lib.decorators import require_params
-from lib.utils import generate_signature, partition, error_response
+from lib.utils import partition, error_response
 
 
 # Message types that should be processed. If you choose to respond to other message types, you will
 # need to add them here
-ALLOWED_MESSAGE_TYPES = [MessageType.TEXT, MessageType.PICTURE, MessageType.VIDEO, MessageType.LINK,
-                         MessageType.STICKER, MessageType.SCAN_DATA]
+ALLOWED_MESSAGE_TYPES = [TextMessage, PictureMessage, VideoMessage, LinkMessage, StartChattingMessage,
+                         StickerMessage, ScanDataMessage]
+
+kik = KikApi(Config.BOT_USERNAME, Config.BOT_API_KEY)
 
 
 @app.route('/receive', methods=['POST'])
 def receive():
-    if request.headers.get('X-Kik-Signature') != generate_signature(Config.BOT_API_KEY, request.get_data()):
+    if not kik.utils.verify_signature(request.headers.get('X-Kik-Signature'), request.get_data()):
         return error_response(403, 'API signature incorrect')
 
     if not isinstance(request.args.get('messages'), list):
@@ -29,12 +31,9 @@ def receive():
 
     tasks = []
     for message in request.args['messages']:
-        if 'type' in message and message['type'] in ALLOWED_MESSAGE_TYPES:
-            tasks.append(taskqueue.Task(
-                url='/tasks/incoming',
-                payload=json.dumps({'message': message})))
-        else:
-            logging.info('Ignoring non-whitelisted message of type {}'.format(message['type']))
+        tasks.append(taskqueue.Task(
+            url='/tasks/incoming',
+            payload=json.dumps({'message': message})))
 
     for batch in partition(tasks, Config.MAX_TASKQUEUE_BATCH_SIZE):
         taskqueue.Queue('incoming').add(batch)
@@ -45,13 +44,21 @@ def receive():
 @app.route('/tasks/incoming', methods=['POST'])
 @require_params('message')
 def incoming():
-    message = request.args['message']
+    message = messages_from_json([request.args['message']])[0]
+
+    if not any(isinstance(message, allowed_type) for allowed_type in ALLOWED_MESSAGE_TYPES):
+        logging.debug('Ignoring non allowed message of type {}'.format(message.type))
+        return '', 200
+
+    if message.mention and message.mention != Config.BOT_USERNAME:
+        logging.debug('Dropping message mentioning another bot. Message is mentioning {}'.format(message.mention))
+        return '', 200
 
     logging.debug('Processing message: {}'.format(message))
 
-    outgoing_messages = state_machine.handle_message(message['from'], message)
-
-    if len(outgoing_messages) > 0:
-        send_messages(outgoing_messages, bot_name=Config.BOT_USERNAME, bot_api_key=Config.BOT_API_KEY)
+    if isinstance(message, TextMessage):
+        kik.message.send([TextMessage(to=message.from_user, chat_id=message.chat_id, body=message.body)])
+    else:
+        kik.message.send([TextMessage(to=message.from_user, chat_id=message.chat_id, body='I\'m just an example bot')])
 
     return '', 200
