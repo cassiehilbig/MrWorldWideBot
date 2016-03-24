@@ -18,20 +18,20 @@ class BotHandlerTest(TestBase):
         return base64.b16encode(hmac.new(str(api_key), body, hashlib.sha1).digest())
 
     def test_no_signature(self):
-        self.api_call('post', '/receive', status=403)
+        self.api_call('post', '/incoming', status=403)
 
     def test_invalid_signature(self):
-        self.api_call('post', '/receive', headers={'X-Kik-Signature': 'foobar'}, status=403)
+        self.api_call('post', '/incoming', headers={'X-Kik-Signature': 'foobar'}, status=403)
 
     def test_data_not_json(self):
         body = 'yolo'
-        self.api_call('post', '/receive', headers={
+        self.api_call('post', '/incoming', headers={
             'X-Kik-Signature': self._generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=400)
 
     def test_no_messages(self):
         body = json.dumps({})
-        self.api_call('post', '/receive', headers={
+        self.api_call('post', '/incoming', headers={
             'X-Kik-Signature': self._generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=400)
 
@@ -39,7 +39,7 @@ class BotHandlerTest(TestBase):
         body = json.dumps({
             'messages': 'yolo'
         })
-        self.api_call('post', '/receive', headers={
+        self.api_call('post', '/incoming', headers={
             'X-Kik-Signature': self._generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=400)
 
@@ -48,7 +48,7 @@ class BotHandlerTest(TestBase):
         body = json.dumps({
             'messages': []
         })
-        self.api_call('post', '/receive', headers={
+        self.api_call('post', '/incoming', headers={
             'X-Kik-Signature': self._generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=200)
 
@@ -60,7 +60,7 @@ class BotHandlerTest(TestBase):
         body = json.dumps({
             'messages': [message]
         })
-        self.api_call('post', '/receive', headers={
+        self.api_call('post', '/incoming', headers={
             'X-Kik-Signature': self._generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=200)
 
@@ -83,7 +83,7 @@ class BotHandlerTest(TestBase):
         body = json.dumps({
             'messages': [message0] * Config.MAX_TASKQUEUE_BATCH_SIZE + [message1]
         })
-        self.api_call('post', '/receive', headers={
+        self.api_call('post', '/incoming', headers={
             'X-Kik-Signature': self._generate_signature(Config.BOT_API_KEY, body)
         }, data=body, status=200)
 
