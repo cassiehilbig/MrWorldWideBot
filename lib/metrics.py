@@ -16,11 +16,11 @@ class EnqueuingConsumer(object):
 _mp = None
 
 
-def track(user, metric, data, **kwargs):
+def track(id, metric, data, **kwargs):
     """
     Sends a metrics event to mixpanel
 
-    :param user: The BotUser this metric relates to
+    :param id: The unique ID for this event
     :param metric: The name of the metric event
     :param data: A dictionary containing additional properties associated with this event
     :param kwargs: Additional arguments that will be passed through to Mixpanel's track function
@@ -29,7 +29,5 @@ def track(user, metric, data, **kwargs):
 
     if _mp is None:
         _mp = Mixpanel(Config.MIXPANEL_TOKEN, EnqueuingConsumer())
-    if user.states:
-        data['state'] = user.states[-1]
 
-    _mp.track(user.id, metric, data, **kwargs)
+    _mp.track(id, metric, data, **kwargs)

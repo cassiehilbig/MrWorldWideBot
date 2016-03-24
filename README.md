@@ -35,8 +35,8 @@ ngrok http 8080
 ```
 This will create a public tunnel to your local environment. Copy the URL that starts with `https`.
 
-Go to your [Reply Settings](https://engine.kik.com/#/engine) and change the URL to the one that you just copied followed by `/receive`.
-For instance: `https://4ce24529.ngrok.com/receive`.
+Go to your [Reply Settings](https://engine.kik.com/#/engine) and change the URL to the one that you just copied followed by `/incoming`.
+For instance: `https://4ce24529.ngrok.com/incoming`.
 
 Start the server by running:
 
@@ -90,7 +90,7 @@ export MIXPANEL_TOKEN={{your mixpanel token}}
 ```
 
 The Mixpanel functionality lives in [lib.metrics](lib/metrics.py).
-Just import the `track` function, and call it with a `BotUser`, the name of the event and a dictionary containing any additional data you want to track.
+Just import the `track` function, and call it with a distinct ID (probably either a username or a conversation ID, depending on how you want to track metrics), the name of the event and a dictionary containing any additional data you want to track.
 
 Example
 ```python

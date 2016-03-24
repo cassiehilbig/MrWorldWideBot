@@ -1,16 +1,9 @@
-import base64
-import hashlib
-import hmac
 import os
 import json
 
 
 def is_debug():
     return 'Development' in os.environ.get('SERVER_SOFTWARE', 'Production')
-
-
-def generate_signature(api_token, req_body):
-    return base64.b16encode(hmac.new(str(api_token), req_body, hashlib.sha1).digest())
 
 
 def partition(lst, size):
