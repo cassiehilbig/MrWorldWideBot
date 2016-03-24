@@ -90,7 +90,7 @@ export MIXPANEL_TOKEN={{your mixpanel token}}
 ```
 
 The Mixpanel functionality lives in [lib.metrics](lib/metrics.py).
-Just import the `track` function, and call it with a distinct ID (probably either a username or a conversation ID, depending on how you want to tract metrics), the name of the event and a dictionary containing any additional data you want to track.
+Just import the `track` function, and call it with a distinct ID (probably either a username or a conversation ID, depending on how you want to track metrics), the name of the event and a dictionary containing any additional data you want to track.
 
 Example
 ```python
