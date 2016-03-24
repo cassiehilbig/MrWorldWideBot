@@ -12,7 +12,6 @@ from lib import logging
 from lib.decorators import require_params
 from lib.utils import partition, error_response
 
-
 # Message types that should be processed. If you choose to respond to other message types, you will
 # need to add them here
 ALLOWED_MESSAGE_TYPES = [TextMessage, PictureMessage, VideoMessage, LinkMessage, StartChattingMessage,
