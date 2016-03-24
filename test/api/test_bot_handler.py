@@ -2,17 +2,15 @@ import base64
 import hashlib
 import hmac
 import json
+
 import mock
-
-from test.test_base import TestBase
-
 from kik import messages
 
+from test.test_base import TestBase
 from config import Config
 
 
 class BotHandlerTest(TestBase):
-
     @staticmethod
     def _generate_signature(api_key, body):
         return base64.b16encode(hmac.new(str(api_key), body, hashlib.sha1).digest())
@@ -110,7 +108,6 @@ class BotHandlerTest(TestBase):
 
 
 class IncomingMessageTaskTest(TestBase):
-
     def setUp(self):
         super(IncomingMessageTaskTest, self).setUp()
 
