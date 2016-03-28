@@ -1,5 +1,5 @@
-from kik.messages import make_text_message
-from kik.state_machine import State, PopTransition
+from kik.messages.text import TextMessage
+from lib.state_machine import State, PopTransition
 
 from lib.states.state_types import StateTypes
 
@@ -16,4 +16,4 @@ class SentPictureState(State):
         return StateTypes.SENT_PICTURE
 
     def on_message(self, message):
-        return PopTransition([make_text_message(self.user.id, SentPictureStrings.SENT_PICTURE_MESSAGE)])
+        return PopTransition([TextMessage(to=self.user.id, body=SentPictureStrings.SENT_PICTURE_MESSAGE)])

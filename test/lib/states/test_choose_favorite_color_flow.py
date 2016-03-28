@@ -115,16 +115,16 @@ class ChooseColorTest(TestBase):
         self.assertEqual(user.states, [ChooseColorState.type()])
 
 
-class ConfirmColorTest(ExampleBotTestBase):
+class ConfirmColorTest(TestBase):
 
     def setUp(self):
-        super(ExampleBotTestBase, self).setUp()
+        super(TestBase, self).setUp()
         self.old_states = state_machine._states
         state_machine.register_state(GenericState)
         state_machine.register_state(AlwaysPoppingState)
 
     def tearDown(self):
-        super(ExampleBotTestBase, self).tearDown()
+        super(TestBase, self).tearDown()
         state_machine._states = self.old_states
 
     def test_static(self):

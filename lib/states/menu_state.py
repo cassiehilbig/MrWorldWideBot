@@ -1,4 +1,4 @@
-from kik.messages import make_text_message
+from kik.messages.text import TextMessage
 from lib.state_machine import KeywordState, keyword_response, LambdaTransition, StackTransition
 
 from lib.states.state_types import StateTypes
@@ -20,16 +20,16 @@ class MenuState(KeywordState):
     @keyword_response('Color', 'colour')
     def handle_color(self, message):
         return StackTransition(
-            [make_text_message(self.user.id, MenuStateStrings.COLOR_MESSAGE)],
+            [TextMessage(to=self.user.id, body=MenuStateStrings.COLOR_MESSAGE)],
             StateTypes.CHOOSE_COLOR
         )
 
     @keyword_response('Do nothing', 'nothing')
     def handle_nothing(self, message):
-        return LambdaTransition([make_text_message(self.user.id, MenuStateStrings.NOTHING_MESSAGE)])
+        return LambdaTransition([TextMessage(to=self.user.id, body=MenuStateStrings.NOTHING_MESSAGE)])
 
     def handle_unmatched(self, message):
-        return LambdaTransition([make_text_message(self.user.id, MenuStateStrings.CONFUSED_MESSAGE)])
+        return LambdaTransition([TextMessage(to=self.user.id, body=MenuStateStrings.CONFUSED_MESSAGE)])
 
     def on_resume(self):
-        return LambdaTransition([make_text_message(self.user.id, MenuStateStrings.RESUME_MESSAGE)])
+        return LambdaTransition([TextMessage(to=self.user.id, body=MenuStateStrings.RESUME_MESSAGE)])

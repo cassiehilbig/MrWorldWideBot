@@ -1,4 +1,4 @@
-from kik.messages import MessageType
+from lib.message_types import MessageType
 from sent_picture_state import SentPictureState
 
 
