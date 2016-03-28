@@ -2,7 +2,7 @@ import sys
 
 from transition import Transition, PopTransition, StackTransition, LambdaTransition, JumpTransition
 from keyword_state import KeywordState
-from kik.messages import MessageType
+from lib.message_types import MessageType
 
 
 class StateMachine(object):

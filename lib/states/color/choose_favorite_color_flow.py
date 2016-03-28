@@ -3,6 +3,7 @@ from lib.state_machine import KeywordState, keyword_response, ConfirmationState,
     LambdaTransition
 
 from lib.states.state_types import StateTypes
+from lib.message_types import MessageType
 
 
 COLORS = ['White', 'Blue', 'Red', 'Purple', 'Orange']
@@ -36,7 +37,7 @@ class ChooseColorState(KeywordState):
         return PopTransition([TextMessage(to=self.user.id, body=ChooseFavoriteColorStrings.CANCEL_MESSAGE)])
 
     def handle_unmatched(self, message):
-        if message['type'] != 'text':
+        if message['type'] != MessageType.TEXT:
             return LambdaTransition([TextMessage(to=self.user.id,
                                                  body=ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE)])
 

@@ -1,4 +1,3 @@
-from kik.messages import MessageType
 from lib.state_machine import State, PopTransition
 
 from test.test_base import TestBase
@@ -6,7 +5,9 @@ from lib.bot_state_machine import state_machine
 from lib.states.color.choose_favorite_color_flow import ChooseFavoriteColorStrings, ChooseColorState,\
     ConfirmColorState, COLORS
 from lib.states.state_types import StateTypes
-from model import base_model
+from model.bot_user import BotUser
+from lib.message_types import MessageType
+
 
 
 class GenericState(State):

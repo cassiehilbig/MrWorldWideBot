@@ -1,6 +1,6 @@
-from kik.state_machine import StateMachine, PersistenceStrategy
+from lib.state_machine import StateMachine, PersistenceStrategy
 
-from model import BotUser
+from model.bot_user import BotUser
 from states import DefaultState, MenuState, ChooseColorState, ConfirmColorState, picture_interceptor, SentPictureState
 
 
