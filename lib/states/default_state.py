@@ -1,5 +1,6 @@
 from kik.api import get_user_profile
 from kik.messages import make_text_message
+from lib.state_machine import State, Transition
 from kik.state_machine import State, Transition
 
 from lib.states.state_types import StateTypes
