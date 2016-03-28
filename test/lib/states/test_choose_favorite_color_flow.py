@@ -7,7 +7,7 @@ from lib.states.color.choose_favorite_color_flow import ChooseFavoriteColorStrin
 from lib.states.state_types import StateTypes
 from model.bot_user import BotUser
 from lib.message_types import MessageType
-
+from test.example_bot_test_base import ExampleBotTestBase
 
 
 class GenericState(State):
@@ -27,16 +27,16 @@ class AlwaysPoppingState(State):
         return PopTransition([])
 
 
-class ChooseColorTest(TestBase):
+class ChooseColorTest(ExampleBotTestBase):
 
     def setUp(self):
-        super(TestBase, self).setUp()
+        super(ExampleBotTestBase, self).setUp()
         self.old_states = state_machine._states
         state_machine.register_state(GenericState)
         state_machine.register_state(AlwaysPoppingState)
 
     def tearDown(self):
-        super(TestBase, self).tearDown()
+        super(ExampleBotTestBase, self).tearDown()
         state_machine._states = self.old_states
 
     def test_static(self):
@@ -115,16 +115,16 @@ class ChooseColorTest(TestBase):
         self.assertEqual(user.states, [ChooseColorState.type()])
 
 
-class ConfirmColorTest(TestBase):
+class ConfirmColorTest(ExampleBotTestBase):
 
     def setUp(self):
-        super(TestBase, self).setUp()
+        super(ExampleBotTestBase, self).setUp()
         self.old_states = state_machine._states
         state_machine.register_state(GenericState)
         state_machine.register_state(AlwaysPoppingState)
 
     def tearDown(self):
-        super(TestBase, self).tearDown()
+        super(ExampleBotTestBase, self).tearDown()
         state_machine._states = self.old_states
 
     def test_static(self):
