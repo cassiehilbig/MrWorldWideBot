@@ -2,7 +2,7 @@ from kik.messages import MessageType
 from lib.state_machine import State, PopTransition
 
 from test.test_base import TestBase
-from lib.state_machine import state_machine
+from lib.bot_state_machine import state_machine
 from lib.states.color.choose_favorite_color_flow import ChooseFavoriteColorStrings, ChooseColorState,\
     ConfirmColorState, COLORS
 from lib.states.state_types import StateTypes
@@ -35,7 +35,7 @@ class ChooseColorTest(TestBase):
         state_machine.register_state(AlwaysPoppingState)
 
     def tearDown(self):
-        super(ExampleBotTestBase, self).tearDown()
+        super(TestBase, self).tearDown()
         state_machine._states = self.old_states
 
     def test_static(self):
