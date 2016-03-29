@@ -12,6 +12,7 @@ from lib.__init__ import get_kik_api
 from lib.decorators import require_params
 from lib.utils import partition, error_response
 
+from lib.state_machine import StateMachine
 # Message types that should be processed. If you choose to respond to other message types, you will
 # need to add them here
 ALLOWED_MESSAGE_TYPES = [TextMessage, PictureMessage, VideoMessage, LinkMessage, StartChattingMessage,
@@ -50,6 +51,12 @@ def incoming():
     if message.mention and message.mention != Config.BOT_USERNAME:
         logging.debug('Dropping message mentioning another bot. Message is mentioning {}'.format(message.mention))
         return '', 200
+
+
+    outgoing_messages = state_machine.handle_message(message['from'], message)
+
+    if len(outgoing_messages) > 0:
+        send_messages(outgoing_messages, bot_name=Config.BOT_USERNAME, bot_api_key=Config.BOT_API_KEY)
 
     logging.debug('Processing message: {}'.format(message))
 
