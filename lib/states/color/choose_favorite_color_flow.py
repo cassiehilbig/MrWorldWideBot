@@ -32,25 +32,26 @@ class ChooseColorState(KeywordState):
         # We don't want to have too many functions, so let's add suggested responses dynamically
         self.suggested_responses = COLORS + self.suggested_responses
 
-    @keyword_response('Cancel', 'back')
+    @keyword_response('cancel', 'back')
     def handle_cancel(self, message):
         return PopTransition([TextMessage(to=self.user.id, body=ChooseFavoriteColorStrings.CANCEL_MESSAGE)])
 
     def handle_unmatched(self, message):
-        if message['type'] != MessageType.TEXT:
+        print "handling umatched"
+        if message.type != MessageType.TEXT:
             return LambdaTransition([TextMessage(to=self.user.id,
                                                  body=ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE)])
 
         lower_colors = [c.lower() for c in COLORS]
-        pick = message['body'].strip().lower()
+        pick = message.body.strip().lower()
 
         if pick not in lower_colors:
             return LambdaTransition([TextMessage(to=self.user.id, body=ChooseFavoriteColorStrings.UNKNOWN_COLOR)])
 
         self.user.get_state_data(ConfirmColorState.type())['color'] = pick
 
-        message = ChooseFavoriteColorStrings.CONFIRM_COLOR.format(color=pick)
-        return Transition([TextMessage(to=self.user.id, body=message)], ConfirmColorState.type())
+        msg = ChooseFavoriteColorStrings.CONFIRM_COLOR.format(color=pick)
+        return Transition([TextMessage(to=self.user.id, body=msg)], ConfirmColorState.type())
 
     def on_resume(self):
         return LambdaTransition([TextMessage(to=self.user.id, body=ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE)])

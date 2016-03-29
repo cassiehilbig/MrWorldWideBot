@@ -6,11 +6,11 @@ import json
 import mock
 from kik import messages
 
-from test.test_base import TestBase
 from config import Config
+from test.bot_test_base import BotTestBase
 
 
-class BotHandlerTest(TestBase):
+class BotHandlerTest(BotTestBase):
     @staticmethod
     def _generate_signature(api_key, body):
         return base64.b16encode(hmac.new(str(api_key), body, hashlib.sha1).digest())

@@ -1,13 +1,14 @@
 from lib.state_machine import State, PopTransition
 
-from test.test_base import TestBase
+from test.bot_test_base import BotTestBase
 from lib.bot_state_machine import state_machine
 from lib.states.color.choose_favorite_color_flow import ChooseFavoriteColorStrings, ChooseColorState,\
     ConfirmColorState, COLORS
 from lib.states.state_types import StateTypes
 from model.bot_user import BotUser
 from lib.message_types import MessageType
-from test.example_bot_test_base import ExampleBotTestBase
+from kik.messages.text import TextMessage
+from kik.messages.scan_data import ScanDataMessage
 
 
 class GenericState(State):
@@ -27,16 +28,16 @@ class AlwaysPoppingState(State):
         return PopTransition([])
 
 
-class ChooseColorTest(ExampleBotTestBase):
+class ChooseColorTest(BotTestBase):
 
     def setUp(self):
-        super(ExampleBotTestBase, self).setUp()
+        super(BotTestBase, self).setUp()
         self.old_states = state_machine._states
         state_machine.register_state(GenericState)
         state_machine.register_state(AlwaysPoppingState)
 
     def tearDown(self):
-        super(ExampleBotTestBase, self).tearDown()
+        super(BotTestBase, self).tearDown()
         state_machine._states = self.old_states
 
     def test_static(self):
@@ -45,40 +46,31 @@ class ChooseColorTest(ExampleBotTestBase):
     def test_confused(self):
         BotUser(id='remi', states=[ChooseColorState.type()]).put()
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'what is a color'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': ChooseFavoriteColorStrings.UNKNOWN_COLOR,
-            'suggestedResponses': COLORS + ['Cancel']
-        }
+        incoming_message = TextMessage(from_user='remi', body='what is a color')
+        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.UNKNOWN_COLOR)
+             # 'suggestedResponses': COLORS + ['Cancel']
+
         self.bot_call([incoming_message], [outgoing_message])
 
         self.assertEqual(BotUser.get_by_id('remi').states, [ChooseColorState.type()])
 
-    def test_unkown_type(self):
+    def test_unknown_type(self):
         BotUser(id='remi', states=[ChooseColorState.type()]).put()
 
-        incoming_message = {'type': MessageType.SCAN_DATA, 'from': 'remi', 'data': 'yolol'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE,
-            'suggestedResponses': COLORS + ['Cancel']
-        }
+        incoming_message = ScanDataMessage(from_user='remi', data='yolol')
+        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE)
+            # 'suggestedResponses': COLORS + ['Cancel']
         self.bot_call([incoming_message], [outgoing_message])
 
         self.assertEqual(BotUser.get_by_id('remi').states, [ChooseColorState.type()])
 
     def test_cancel(self):
         BotUser(id='remi', states=[GenericState.type(), ChooseColorState.type()]).put()
+        print BotUser.get_by_id('remi').states
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'cancel'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': ChooseFavoriteColorStrings.CANCEL_MESSAGE
-        }
+        incoming_message = TextMessage(from_user='remi', body='cancel')
+        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.CANCEL_MESSAGE)
+
         self.bot_call([incoming_message], [outgoing_message])
 
         self.assertEqual(BotUser.get_by_id('remi').states, [GenericState.type()])
@@ -86,13 +78,9 @@ class ChooseColorTest(ExampleBotTestBase):
     def test_color(self):
         BotUser(id='remi', states=[GenericState.type(), ChooseColorState.type()]).put()
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'blue'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': ChooseFavoriteColorStrings.CONFIRM_COLOR.format(color='blue'),
-            'suggestedResponses': ['Yes', 'No']
-        }
+        incoming_message = TextMessage(from_user='remi', body='blue')
+        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.CONFIRM_COLOR.format(color='blue'))
+
         self.bot_call([incoming_message], [outgoing_message])
 
         user = BotUser.get_by_id('remi')
@@ -102,29 +90,25 @@ class ChooseColorTest(ExampleBotTestBase):
     def test_resume(self):
         BotUser(id='remi', states=[ChooseColorState.type(), AlwaysPoppingState.type()]).put()
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'yolo'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE,
-            'suggestedResponses': COLORS + ['Cancel']
-        }
+        incoming_message = TextMessage(from_user='remi', body='yolo')
+        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE)
+        #'suggestedResponses': COLORS + ['Cancel']
         self.bot_call([incoming_message], [outgoing_message])
 
         user = BotUser.get_by_id('remi')
         self.assertEqual(user.states, [ChooseColorState.type()])
 
 
-class ConfirmColorTest(ExampleBotTestBase):
+class ConfirmColorTest(BotTestBase):
 
     def setUp(self):
-        super(ExampleBotTestBase, self).setUp()
+        super(BotTestBase, self).setUp()
         self.old_states = state_machine._states
         state_machine.register_state(GenericState)
         state_machine.register_state(AlwaysPoppingState)
 
     def tearDown(self):
-        super(ExampleBotTestBase, self).tearDown()
+        super(BotTestBase, self).tearDown()
         state_machine._states = self.old_states
 
     def test_static(self):

@@ -2,13 +2,13 @@ import json
 
 from flask import request
 from google.appengine.api import taskqueue
-from kik import KikApi
 from kik.messages import messages_from_json, TextMessage, PictureMessage, VideoMessage, LinkMessage, \
     StartChattingMessage, StickerMessage, ScanDataMessage
 
 from app import app
 from config import Config
 from lib import logging
+from lib.__init__ import get_kik_api
 from lib.decorators import require_params
 from lib.utils import partition, error_response
 
@@ -17,12 +17,10 @@ from lib.utils import partition, error_response
 ALLOWED_MESSAGE_TYPES = [TextMessage, PictureMessage, VideoMessage, LinkMessage, StartChattingMessage,
                          StickerMessage, ScanDataMessage]
 
-kik = KikApi(Config.BOT_USERNAME, Config.BOT_API_KEY)
-
 
 @app.route('/incoming', methods=['POST'])
 def receive():
-    if not kik.utils.verify_signature(request.headers.get('X-Kik-Signature'), request.get_data()):
+    if not get_kik_api().utils.verify_signature(request.headers.get('X-Kik-Signature'), request.data):
         return error_response(403, 'API signature incorrect')
 
     if not isinstance(request.args.get('messages'), list):
@@ -56,8 +54,8 @@ def incoming():
     logging.debug('Processing message: {}'.format(message))
 
     if isinstance(message, TextMessage):
-        kik.message.send([TextMessage(to=message.from_user, chat_id=message.chat_id, body=message.body)])
+        get_kik_api().message.send([TextMessage(to=message.from_user, chat_id=message.chat_id, body=message.body)])
     else:
-        kik.message.send([TextMessage(to=message.from_user, chat_id=message.chat_id, body='I\'m just an example bot')])
+        get_kik_api().message.send([TextMessage(to=message.from_user, chat_id=message.chat_id, body='I\'m just an example bot')])
 
     return '', 200

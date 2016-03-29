@@ -1,6 +1,7 @@
 import re
 
 from state import State
+from kik.messages.responses import TextResponse
 
 order = 1
 
@@ -54,14 +55,14 @@ class KeywordState(State):
 
         self.keyword_responses.sort(key=lambda sr: sr.order)
         if len(self.keyword_responses) <= 7:
-            self.suggested_responses = [kw.keyword for kw in self.keyword_responses]
+            self.suggested_responses = [TextResponse(body=kw.keyword)for kw in self.keyword_responses]
         else:
             self.suggested_responses = None
 
     def on_message(self, message):
         transition = None
         for sr in self.keyword_responses:
-            if sr.match(message.get('body')):
+            if sr.match(message.body):  # TODO Check Type
                 transition = sr(self, message)
                 break
         if not transition:

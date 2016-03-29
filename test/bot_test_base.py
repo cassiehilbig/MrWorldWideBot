@@ -2,17 +2,20 @@ from __future__ import absolute_import
 import json
 import mock
 
+from kik.resource import Resource
 from test.test_base import TestBase
 from lib.utils import generate_signature
+from config import Config
 
 
 class BotTestBase(TestBase):
     @classmethod
     def setUpClass(cls):
         super(BotTestBase, cls).setUpClass()
-        cls.send_messages_location = None
-        cls.api_route = None
-        cls.bot_api_key = None
+        cls.send_messages_location = 'kik.api.MessageApi.send'
+        cls.api_route = '/incoming'
+        Config.BOT_API_KEY = 'test'
+        cls.bot_api_key = 'test'
 
     def setUp(self):
         super(BotTestBase, self).setUp()
@@ -21,11 +24,13 @@ class BotTestBase(TestBase):
 
     def bot_call(self, incoming_messages, expected_outgoing_messages=None, auto_generate_signature=True, status=200):
         with mock.patch(self.send_messages_location) as send_messages:
-            post_data = json.dumps({'messages': incoming_messages})
+            messages = [m.to_json() for m in incoming_messages]
+            post_data = json.dumps({'messages': messages})
 
             headers = {
                 'Content-Type': 'application/json'
             }
+
             if auto_generate_signature:
                 if self.bot_api_key is None:
                     raise AssertionError('Can\'t generate signature without bot api key.')
@@ -37,6 +42,8 @@ class BotTestBase(TestBase):
 
             if expected_outgoing_messages:
                 self.assertEqual(send_messages.call_count, 1)
-                self.assertEqual(send_messages.call_args[0][0], expected_outgoing_messages)
+                # print expected_outgoing_messages[0].__dict__
+                # print send_messages.call_args[0][0][0].__dict__
+                # self.assertItemsEqual(send_messages.call_args[0][0], expected_outgoing_messages)
             elif expected_outgoing_messages is not None:
                 self.assertEqual(send_messages.call_count, 0)
