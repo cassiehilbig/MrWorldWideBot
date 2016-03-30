@@ -33,7 +33,7 @@ class ChooseColorTest(BotTestBase):
     def setUp(self):
         super(BotTestBase, self).setUp()
         self.old_states = state_machine._states
-        state_machine.register_state(GenericState)
+        # state_machine.register_state(GenericState)
         state_machine.register_state(AlwaysPoppingState)
 
     def tearDown(self):
@@ -78,19 +78,19 @@ class ChooseColorTest(BotTestBase):
 
         self.assertEqual(BotUser.get_by_id('remi').states, [GenericState.type()])
 
-    # def test_color(self):
-    #     BotUser(id='remi', states=[GenericState.type(), ChooseColorState.type()]).put()
-    #
-    #     incoming_message = TextMessage(from_user='remi', body='blue')
-    #     srs = [TextResponse(body=x) for x in ('Yes', 'No')]
-    #     outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.CONFIRM_COLOR.format(color='blue'),
-    #                                    keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
-    #
-    #     self.bot_call([incoming_message], [outgoing_message])
-    #
-    #     user = BotUser.get_by_id('remi')
-    #     self.assertEqual(user.states, [GenericState.type(), ConfirmColorState.type()])
-    #     self.assertEqual(user.state_data, {ConfirmColorState.type(): {'color': 'blue'}})
+    def test_color(self):
+        BotUser(id='remi', states=[GenericState.type(), ChooseColorState.type()]).put()
+
+        incoming_message = TextMessage(from_user='remi', body='blue')
+        srs = [TextResponse(body=x) for x in ('Yes', 'No')]
+        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.CONFIRM_COLOR.format(color='blue'),
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
+
+        self.bot_call([incoming_message], [outgoing_message])
+
+        user = BotUser.get_by_id('remi')
+        self.assertEqual(user.states, [GenericState.type(), ConfirmColorState.type()])
+        self.assertEqual(user.state_data, {ConfirmColorState.type(): {'color': 'blue'}})
 
     def test_resume(self):
         BotUser(id='remi', states=[ChooseColorState.type(), AlwaysPoppingState.type()]).put()
