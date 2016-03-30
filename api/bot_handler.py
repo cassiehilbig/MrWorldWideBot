@@ -1,18 +1,17 @@
 import json
 
-from flask import request
 from google.appengine.api import taskqueue
-from kik.messages import messages_from_json, TextMessage, PictureMessage, VideoMessage, LinkMessage, \
-    StartChattingMessage, StickerMessage, ScanDataMessage
 
 from app import app
 from config import Config
+from flask import request
+from kik.messages import messages_from_json, TextMessage, PictureMessage, VideoMessage, LinkMessage, \
+    StartChattingMessage, StickerMessage, ScanDataMessage
 from lib import logging
 from lib.__init__ import get_kik_api
+from lib.bot_state_machine import state_machine
 from lib.decorators import require_params
 from lib.utils import partition, error_response
-
-from lib.bot_state_machine import state_machine
 # Message types that should be processed. If you choose to respond to other message types, you will
 # need to add them here
 ALLOWED_MESSAGE_TYPES = [TextMessage, PictureMessage, VideoMessage, LinkMessage, StartChattingMessage,

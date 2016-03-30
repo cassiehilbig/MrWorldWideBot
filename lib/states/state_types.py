@@ -8,3 +8,5 @@ class StateTypes(object):
     CHOOSE_COLOR = 'choose-color'
     CONFIRM_COLOR = 'confirm-color'
     SENT_PICTURE = 'sent-picture'
+    GENERIC = 'foo'
+    ALWAYS_POPPING = 'pop'

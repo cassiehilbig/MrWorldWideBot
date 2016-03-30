@@ -1,23 +1,13 @@
+from kik.messages.keyboards import SuggestedResponseKeyboard
 from kik.messages.responses import TextResponse
 from kik.messages.text import TextMessage
-from kik.messages.keyboards import SuggestedResponseKeyboard
 from lib.bot_state_machine import state_machine
-from lib.state_machine import State, PopTransition
+from lib.states.always_popping_state import AlwaysPoppingState
 from lib.states.color.choose_favorite_color_flow import ChooseColorState, COLORS
 from lib.states.menu_state import MenuState, MenuStateStrings
 from lib.states.state_types import StateTypes
 from model.bot_user import BotUser
 from test.bot_test_base import BotTestBase
-
-
-class AlwaysPoppingState(State):
-
-    @staticmethod
-    def type():
-        return 'pop'
-
-    def on_message(self, message):
-        return PopTransition([])
 
 
 class MenuStateTest(BotTestBase):

@@ -1,18 +1,11 @@
 from kik.messages.picture import PictureMessage
 from kik.messages.text import TextMessage
 from lib.bot_state_machine import state_machine
-from lib.state_machine import State
+from lib.states.generic_state import GenericState
 from lib.states.picture.sent_picture_state import SentPictureStrings, SentPictureState
 from lib.states.state_types import StateTypes
 from model.bot_user import BotUser
 from test.bot_test_base import BotTestBase
-
-
-class GenericState(State):
-
-    @staticmethod
-    def type():
-        return 'foo'
 
 
 class PictureStateTest(BotTestBase):

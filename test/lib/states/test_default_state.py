@@ -1,13 +1,13 @@
 import mock
 
-from test.bot_test_base import BotTestBase
+from kik.messages.keyboards import SuggestedResponseKeyboard
 from kik.messages.responses import TextResponse
 from kik.messages.text import TextMessage
-from kik.messages.keyboards import SuggestedResponseKeyboard
 from lib.states.default_state import DefaultState, DefaultStateStrings
 from lib.states.menu_state import MenuState
 from lib.states.state_types import StateTypes
 from model.bot_user import BotUser
+from test.bot_test_base import BotTestBase
 
 
 class MenuStateTest(BotTestBase):

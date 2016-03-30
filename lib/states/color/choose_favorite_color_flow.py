@@ -1,11 +1,9 @@
-from kik.messages.text import TextMessage
 from kik.messages.responses import TextResponse
+from kik.messages.text import TextMessage
+from lib.message_types import MessageType
 from lib.state_machine import KeywordState, keyword_response, ConfirmationState, Transition, PopTransition,\
     LambdaTransition
-
 from lib.states.state_types import StateTypes
-from lib.message_types import MessageType
-
 
 COLORS = ['White', 'Blue', 'Red', 'Purple', 'Orange']
 

@@ -1,45 +1,19 @@
-from test.bot_test_base import BotTestBase
 from kik.messages.keyboards import SuggestedResponseKeyboard
 from kik.messages.responses import TextResponse
 from kik.messages.scan_data import ScanDataMessage
 from kik.messages.text import TextMessage
 from lib.bot_state_machine import state_machine
-from lib.state_machine import State, PopTransition
+from lib.states import DefaultState
+from lib.states.always_popping_state import AlwaysPoppingState
 from lib.states.color.choose_favorite_color_flow import ChooseFavoriteColorStrings, ChooseColorState,\
     ConfirmColorState, COLORS
+from lib.states.generic_state import GenericState
 from lib.states.state_types import StateTypes
 from model.bot_user import BotUser
-
-
-class GenericState(State):
-
-    @staticmethod
-    def type():
-        return 'foo'
-
-
-class AlwaysPoppingState(State):
-
-    @staticmethod
-    def type():
-        return 'pop'
-
-    def on_message(self, message):
-        return PopTransition([])
+from test.bot_test_base import BotTestBase
 
 
 class ChooseColorTest(BotTestBase):
-
-    def setUp(self):
-        super(BotTestBase, self).setUp()
-        self.old_states = state_machine._states
-        # state_machine.register_state(GenericState)
-        state_machine.register_state(AlwaysPoppingState)
-
-    def tearDown(self):
-        super(BotTestBase, self).tearDown()
-        state_machine._states = self.old_states
-
     def test_static(self):
         self.assertEqual(ChooseColorState.type(), StateTypes.CHOOSE_COLOR)
 
@@ -110,13 +84,9 @@ class ConfirmColorTest(BotTestBase):
 
     def setUp(self):
         super(BotTestBase, self).setUp()
-        self.old_states = state_machine._states
+        state_machine.register_state(DefaultState)
         state_machine.register_state(GenericState)
         state_machine.register_state(AlwaysPoppingState)
-
-    def tearDown(self):
-        super(BotTestBase, self).tearDown()
-        state_machine._states = self.old_states
 
     def test_static(self):
         self.assertEqual(ConfirmColorState.type(), StateTypes.CONFIRM_COLOR)

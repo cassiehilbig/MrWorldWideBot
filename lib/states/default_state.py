@@ -1,7 +1,6 @@
-from kik.api import UserApi
 from kik.messages.text import TextMessage
+from lib.__init__ import get_kik_api
 from lib.state_machine import State, Transition
-
 from lib.states.state_types import StateTypes
 
 
@@ -16,7 +15,6 @@ class DefaultState(State):
         return StateTypes.DEFAULT
 
     def on_message(self, message):
-        profile = UserApi.get(message.from_user)
-        # bot_name=Config.BOT_USERNAME, bot_api_key=Config.BOT_API_KEY)
+        profile = get_kik_api().user.get(message.from_user)
         m = DefaultStateStrings.WELCOME_MESSAGE.format(first_name=profile['firstName'])
         return Transition([TextMessage(to=self.user.id, body=m)], StateTypes.MENU)
