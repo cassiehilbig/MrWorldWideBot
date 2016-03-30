@@ -1,10 +1,12 @@
 from __future__ import absolute_import
+
 import json
+
 import mock
 
-from test.test_base import TestBase
-from lib.utils import generate_signature
 from config import Config
+from lib.utils import generate_signature
+from test.test_base import TestBase
 
 
 class BotTestBase(TestBase):
@@ -13,8 +15,6 @@ class BotTestBase(TestBase):
         super(BotTestBase, cls).setUpClass()
         cls.send_messages_location = 'kik.api.MessageApi.send'
         cls.api_route = '/incoming'
-        Config.BOT_API_KEY = 'test'
-        cls.bot_api_key = 'test'
 
     def setUp(self):
         super(BotTestBase, self).setUp()
@@ -31,9 +31,9 @@ class BotTestBase(TestBase):
             }
 
             if auto_generate_signature:
-                if self.bot_api_key is None:
+                if Config.BOT_API_KEY is None:
                     raise AssertionError('Can\'t generate signature without bot api key.')
-                headers['X-Kik-Signature'] = generate_signature(self.bot_api_key, post_data)
+                headers['X-Kik-Signature'] = generate_signature(Config.BOT_API_KEY, post_data)
 
             self.api_call('POST', self.api_route, data=post_data, headers=headers, status=status)
 

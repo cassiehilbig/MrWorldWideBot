@@ -2,16 +2,16 @@ import json
 
 from google.appengine.api import taskqueue
 
-from app import app
+from app import app, kik
 from config import Config
 from flask import request
 from kik.messages import messages_from_json, TextMessage, PictureMessage, VideoMessage, LinkMessage, \
     StartChattingMessage, StickerMessage, ScanDataMessage
 from lib import logging
-from lib.kik_api import get_kik_api
 from lib.bot_state_machine import state_machine
 from lib.decorators import require_params
 from lib.utils import partition, error_response
+
 # Message types that should be processed. If you choose to respond to other message types, you will
 # need to add them here
 ALLOWED_MESSAGE_TYPES = [TextMessage, PictureMessage, VideoMessage, LinkMessage, StartChattingMessage,
@@ -20,7 +20,7 @@ ALLOWED_MESSAGE_TYPES = [TextMessage, PictureMessage, VideoMessage, LinkMessage,
 
 @app.route('/incoming', methods=['POST'])
 def receive():
-    if not get_kik_api().utils.verify_signature(request.headers.get('X-Kik-Signature'), request.data):
+    if not kik.utils.verify_signature(request.headers.get('X-Kik-Signature'), request.data):
         return error_response(403, 'API signature incorrect')
 
     if not isinstance(request.args.get('messages'), list):
@@ -56,6 +56,6 @@ def incoming():
     logging.debug('Processing message: {}'.format(message))
 
     if len(outgoing_messages) > 0:
-        get_kik_api().message.send(outgoing_messages)
+        kik.message.send(outgoing_messages)
 
     return '', 200
