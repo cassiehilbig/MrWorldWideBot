@@ -5,3 +5,4 @@ mock==1.0.1
 multitest==0.1.2
 Fabric==1.10.2
 freezegun==0.0.3
+webtest==2.0.18
