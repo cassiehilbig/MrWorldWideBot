@@ -2,7 +2,6 @@ from __future__ import absolute_import
 import json
 import mock
 
-from kik.resource import Resource
 from test.test_base import TestBase
 from lib.utils import generate_signature
 from config import Config
@@ -42,8 +41,6 @@ class BotTestBase(TestBase):
 
             if expected_outgoing_messages:
                 self.assertEqual(send_messages.call_count, 1)
-                # print expected_outgoing_messages[0].__dict__
-                # print send_messages.call_args[0][0][0].__dict__
-                # self.assertItemsEqual(send_messages.call_args[0][0], expected_outgoing_messages)
+                self.assertEqual(send_messages.call_args[0][0], expected_outgoing_messages)
             elif expected_outgoing_messages is not None:
                 self.assertEqual(send_messages.call_count, 0)

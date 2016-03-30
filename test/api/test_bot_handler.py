@@ -4,10 +4,10 @@ import hmac
 import json
 
 import mock
-from kik import messages
 
 from config import Config
 from test.bot_test_base import BotTestBase
+from test.test_base import TestBase
 
 
 class BotHandlerTest(BotTestBase):
@@ -118,47 +118,6 @@ class IncomingMessageTaskTest(TestBase):
 
     def test_no_message_param_silent_failure_if_task(self):
         self.api_call('post', '/tasks/incoming', headers=self.headers, status=200)
-
-    @mock.patch('kik.api.MessageApi.send')
-    def test_echoes_text(self, send_messages):
-        message = {
-            'type': 'text',
-            'from': 'someone',
-            'chatId': 'foobarbaz',
-            'body': 'foobar'
-        }
-        self.api_call('post', '/tasks/incoming', data={
-            'message': message
-        })
-
-        self.assertEqual(send_messages.call_count, 1)
-        self.assertEqual(len(send_messages.call_args[0][0]), 1)
-        message = send_messages.call_args[0][0][0]
-        self.assertIsInstance(message, messages.TextMessage)
-        self.assertEqual(message.to, 'someone')
-        self.assertEqual(message.chat_id, 'foobarbaz')
-        self.assertEqual(message.body, 'foobar')
-
-    @mock.patch('kik.api.MessageApi.send')
-    def test_non_text_message(self, send_messages):
-        message = {
-            'type': 'picture',
-            'from': 'someone',
-            'mention': Config.BOT_USERNAME,
-            'chatId': 'foobarbaz',
-            'picUrl': 'http://foo.bar/baz'
-        }
-        self.api_call('post', '/tasks/incoming', data={
-            'message': message
-        })
-
-        self.assertEqual(send_messages.call_count, 1)
-        self.assertEqual(len(send_messages.call_args[0][0]), 1)
-        message = send_messages.call_args[0][0][0]
-        self.assertIsInstance(message, messages.TextMessage)
-        self.assertEqual(message.to, 'someone')
-        self.assertEqual(message.chat_id, 'foobarbaz')
-        self.assertEqual(message.body, 'I\'m just an example bot')
 
     @mock.patch('kik.api.MessageApi.send')
     def test_not_allowed_type(self, send_messages):

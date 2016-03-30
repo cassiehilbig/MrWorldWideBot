@@ -52,16 +52,11 @@ def incoming():
         logging.debug('Dropping message mentioning another bot. Message is mentioning {}'.format(message.mention))
         return '', 200
 
-    outgoing_messages = state_machine.handle_message(message['from'], message)
-
-    if len(outgoing_messages) > 0:
-        send_messages(outgoing_messages, bot_name=Config.BOT_USERNAME, bot_api_key=Config.BOT_API_KEY)
+    outgoing_messages = state_machine.handle_message(message.from_user, message)
 
     logging.debug('Processing message: {}'.format(message))
 
-    if isinstance(message, TextMessage):
-        get_kik_api().message.send([TextMessage(to=message.from_user, chat_id=message.chat_id, body=message.body)])
-    else:
-        get_kik_api().message.send([TextMessage(to=message.from_user, chat_id=message.chat_id, body='I\'m just an example bot')])
+    if len(outgoing_messages) > 0:
+        get_kik_api().message.send(outgoing_messages)
 
     return '', 200

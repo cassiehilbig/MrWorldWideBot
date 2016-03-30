@@ -1,12 +1,13 @@
-from kik.messages import MessageType
-from kik.state_machine import State, PopTransition
-
-from test.example_bot_test_base import ExampleBotTestBase
+from kik.messages.responses import TextResponse
+from kik.messages.text import TextMessage
+from kik.messages.keyboards import SuggestedResponseKeyboard
 from lib.bot_state_machine import state_machine
+from lib.state_machine import State, PopTransition
 from lib.states.color.choose_favorite_color_flow import ChooseColorState, COLORS
 from lib.states.menu_state import MenuState, MenuStateStrings
 from lib.states.state_types import StateTypes
-from model import BotUser
+from model.bot_user import BotUser
+from test.bot_test_base import BotTestBase
 
 
 class AlwaysPoppingState(State):
@@ -19,15 +20,15 @@ class AlwaysPoppingState(State):
         return PopTransition([])
 
 
-class MenuStateTest(ExampleBotTestBase):
+class MenuStateTest(BotTestBase):
 
     def setUp(self):
-        super(ExampleBotTestBase, self).setUp()
+        super(BotTestBase, self).setUp()
         self.old_states = state_machine._states
         state_machine.register_state(AlwaysPoppingState)
 
     def tearDown(self):
-        super(ExampleBotTestBase, self).tearDown()
+        super(BotTestBase, self).tearDown()
         state_machine._states = self.old_states
 
     def test_static(self):
@@ -36,13 +37,11 @@ class MenuStateTest(ExampleBotTestBase):
     def test_confused(self):
         BotUser(id='remi', states=[MenuState.type()]).put()
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'Hello are you from my school?'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': MenuStateStrings.CONFUSED_MESSAGE,
-            'suggestedResponses': ['Color', 'Do nothing']
-        }
+        incoming_message = TextMessage(from_user='remi', body='Hello are you from my school?')
+        srs = [TextResponse(body=x) for x in ['Color', 'Do nothing']]
+        outgoing_message = TextMessage(to='remi', body=MenuStateStrings.CONFUSED_MESSAGE,
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
+
         self.bot_call([incoming_message], [outgoing_message])
 
         self.assertEqual(BotUser.get_by_id('remi').states, [MenuState.type()])
@@ -50,13 +49,12 @@ class MenuStateTest(ExampleBotTestBase):
     def test_color(self):
         BotUser(id='remi', states=[MenuState.type()]).put()
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'Yo I wanna set my favorite color!'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': MenuStateStrings.COLOR_MESSAGE,
-            'suggestedResponses': COLORS + ['Cancel']
-        }
+        incoming_message = TextMessage(from_user='remi', body='Yo I wanna set my favourite colour')
+        srs = [TextResponse(body=x) for x in COLORS]
+        srs.append(TextResponse(body='Cancel'))
+        outgoing_message = TextMessage(to='remi', body=MenuStateStrings.COLOR_MESSAGE,
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
+
         self.bot_call([incoming_message], [outgoing_message])
 
         self.assertEqual(BotUser.get_by_id('remi').states, [MenuState.type(), ChooseColorState.type()])
@@ -64,13 +62,11 @@ class MenuStateTest(ExampleBotTestBase):
     def test_resume(self):
         BotUser(id='remi', states=[MenuState.type(), AlwaysPoppingState.type()]).put()
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'pop!'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': MenuStateStrings.RESUME_MESSAGE,
-            'suggestedResponses': ['Color', 'Do nothing']
-        }
+        incoming_message = TextMessage(from_user='remi', body='pop!')
+        srs = [TextResponse(body=x) for x in ['Color', 'Do nothing']]
+        outgoing_message = TextMessage(to='remi', body=MenuStateStrings.RESUME_MESSAGE,
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
+
         self.bot_call([incoming_message], [outgoing_message])
 
         self.assertEqual(BotUser.get_by_id('remi').states, [MenuState.type()])
@@ -78,13 +74,11 @@ class MenuStateTest(ExampleBotTestBase):
     def test_nothing(self):
         BotUser(id='remi', states=[MenuState.type()]).put()
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'do nothing'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': MenuStateStrings.NOTHING_MESSAGE,
-            'suggestedResponses': ['Color', 'Do nothing']
-        }
+        incoming_message = TextMessage(from_user='remi', body='do nothing')
+        srs = [TextResponse(body=x) for x in ['Color', 'Do nothing']]
+        outgoing_message = TextMessage(to='remi', body=MenuStateStrings.NOTHING_MESSAGE,
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
+
         self.bot_call([incoming_message], [outgoing_message])
 
         self.assertEqual(BotUser.get_by_id('remi').states, [MenuState.type()])

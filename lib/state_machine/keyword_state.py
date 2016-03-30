@@ -2,6 +2,7 @@ import re
 
 from state import State
 from kik.messages.responses import TextResponse
+from lib.message_types import MessageType
 
 order = 1
 
@@ -62,7 +63,7 @@ class KeywordState(State):
     def on_message(self, message):
         transition = None
         for sr in self.keyword_responses:
-            if sr.match(message.body):  # TODO Check Type
+            if message.type == MessageType.TEXT and sr.match(message.body):
                 transition = sr(self, message)
                 break
         if not transition:

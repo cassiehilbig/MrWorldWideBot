@@ -1,43 +1,40 @@
 import mock
 
-from kik.messages import MessageType
-
-from test.example_bot_test_base import ExampleBotTestBase
+from test.bot_test_base import BotTestBase
+from kik.messages.responses import TextResponse
+from kik.messages.text import TextMessage
+from kik.messages.keyboards import SuggestedResponseKeyboard
 from lib.states.default_state import DefaultState, DefaultStateStrings
 from lib.states.menu_state import MenuState
 from lib.states.state_types import StateTypes
-from model import BotUser
+from model.bot_user import BotUser
 
 
-class MenuStateTest(ExampleBotTestBase):
+class MenuStateTest(BotTestBase):
 
     def test_static(self):
         self.assertEqual(DefaultState.type(), StateTypes.DEFAULT)
 
-    @mock.patch('lib.states.default_state.get_user_profile', return_value={'firstName': 'Rems'})
+    @mock.patch('kik.api.UserApi.get', return_value={'firstName': 'Rems'})
     def test_stack_not_existing_user(self, get_user_profile):
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'Hello are you from my school?'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': DefaultStateStrings.WELCOME_MESSAGE.format(first_name='Rems'),
-            'suggestedResponses': ['Color', 'Do nothing']
-        }
+        incoming_message = TextMessage(from_user='remi', body='Hello are you from my school?')
+        srs = [TextResponse(body=x) for x in ['Color', 'Do nothing']]
+        outgoing_message = TextMessage(to='remi', body=DefaultStateStrings.WELCOME_MESSAGE.format(first_name='Rems'),
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
+
         self.bot_call([incoming_message], [outgoing_message])
 
         self.assertEqual(BotUser.get_by_id('remi').states, [MenuState.type()])
 
-    @mock.patch('lib.states.default_state.get_user_profile', return_value={'firstName': 'Rems'})
+    @mock.patch('kik.api.UserApi.get', return_value={'firstName': 'Rems'})
     def test_stack_existing_user(self, get_user_profile):
         BotUser(id='remi').put()
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'Hello are you from my school?'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': DefaultStateStrings.WELCOME_MESSAGE.format(first_name='Rems'),
-            'suggestedResponses': ['Color', 'Do nothing']
-        }
+        incoming_message = TextMessage(from_user='remi', body='Hello are you from my school?')
+        srs = [TextResponse(body=x) for x in ['Color', 'Do nothing']]
+        outgoing_message = TextMessage(to='remi', body=DefaultStateStrings.WELCOME_MESSAGE.format(first_name='Rems'),
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
+
         self.bot_call([incoming_message], [outgoing_message])
 
         self.assertEqual(BotUser.get_by_id('remi').states, [MenuState.type()])

@@ -1,14 +1,14 @@
-from lib.state_machine import State, PopTransition
-
 from test.bot_test_base import BotTestBase
+from kik.messages.keyboards import SuggestedResponseKeyboard
+from kik.messages.responses import TextResponse
+from kik.messages.scan_data import ScanDataMessage
+from kik.messages.text import TextMessage
 from lib.bot_state_machine import state_machine
+from lib.state_machine import State, PopTransition
 from lib.states.color.choose_favorite_color_flow import ChooseFavoriteColorStrings, ChooseColorState,\
     ConfirmColorState, COLORS
 from lib.states.state_types import StateTypes
 from model.bot_user import BotUser
-from lib.message_types import MessageType
-from kik.messages.text import TextMessage
-from kik.messages.scan_data import ScanDataMessage
 
 
 class GenericState(State):
@@ -47,8 +47,10 @@ class ChooseColorTest(BotTestBase):
         BotUser(id='remi', states=[ChooseColorState.type()]).put()
 
         incoming_message = TextMessage(from_user='remi', body='what is a color')
-        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.UNKNOWN_COLOR)
-             # 'suggestedResponses': COLORS + ['Cancel']
+        srs = [TextResponse(body=c) for c in COLORS]
+        srs.append(TextResponse(body='Cancel'))
+        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.UNKNOWN_COLOR,
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
 
         self.bot_call([incoming_message], [outgoing_message])
 
@@ -58,15 +60,16 @@ class ChooseColorTest(BotTestBase):
         BotUser(id='remi', states=[ChooseColorState.type()]).put()
 
         incoming_message = ScanDataMessage(from_user='remi', data='yolol')
-        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE)
-            # 'suggestedResponses': COLORS + ['Cancel']
+        srs = [TextResponse(body=c) for c in COLORS]
+        srs.append(TextResponse(body='Cancel'))
+        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE,
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
         self.bot_call([incoming_message], [outgoing_message])
 
         self.assertEqual(BotUser.get_by_id('remi').states, [ChooseColorState.type()])
 
     def test_cancel(self):
         BotUser(id='remi', states=[GenericState.type(), ChooseColorState.type()]).put()
-        print BotUser.get_by_id('remi').states
 
         incoming_message = TextMessage(from_user='remi', body='cancel')
         outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.CANCEL_MESSAGE)
@@ -79,7 +82,9 @@ class ChooseColorTest(BotTestBase):
         BotUser(id='remi', states=[GenericState.type(), ChooseColorState.type()]).put()
 
         incoming_message = TextMessage(from_user='remi', body='blue')
-        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.CONFIRM_COLOR.format(color='blue'))
+        srs = [TextResponse(body=x) for x in ('Yes', 'No')]
+        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.CONFIRM_COLOR.format(color='blue'),
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
 
         self.bot_call([incoming_message], [outgoing_message])
 
@@ -91,8 +96,10 @@ class ChooseColorTest(BotTestBase):
         BotUser(id='remi', states=[ChooseColorState.type(), AlwaysPoppingState.type()]).put()
 
         incoming_message = TextMessage(from_user='remi', body='yolo')
-        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE)
-        #'suggestedResponses': COLORS + ['Cancel']
+        srs = [TextResponse(body=c) for c in COLORS]
+        srs.append(TextResponse(body='Cancel'))
+        outgoing_message = TextMessage(to='remi', body=ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE,
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
         self.bot_call([incoming_message], [outgoing_message])
 
         user = BotUser.get_by_id('remi')
@@ -119,13 +126,11 @@ class ConfirmColorTest(BotTestBase):
                 states=[ConfirmColorState.type()],
                 state_data={ConfirmColorState.type(): {'color': 'blue'}}).put()
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'what did i do ?????'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': ChooseFavoriteColorStrings.CONFIRMATION_CONFUSED.format(color='blue'),
-            'suggestedResponses': ['Yes', 'No']
-        }
+        incoming_message = TextMessage(from_user='remi', body='what did i do ?????')
+        srs = [TextResponse(body=x) for x in ['Yes', 'No']]
+        outgoing_message = TextMessage(to='remi',
+                                       body=ChooseFavoriteColorStrings.CONFIRMATION_CONFUSED.format(color='blue'),
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
         self.bot_call([incoming_message], [outgoing_message])
 
         user = BotUser.get_by_id('remi')
@@ -137,13 +142,12 @@ class ConfirmColorTest(BotTestBase):
                 states=[ConfirmColorState.type()],
                 state_data={ConfirmColorState.type(): {'color': 'blue'}}).put()
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'nope!'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': ChooseFavoriteColorStrings.CONFIRMATION_CANCELLED.format(color='blue'),
-            'suggestedResponses': COLORS + ['Cancel']
-        }
+        incoming_message = TextMessage(from_user='remi', body='nope!')
+        srs = [TextResponse(body=c) for c in COLORS]
+        srs.append(TextResponse(body='Cancel'))
+        outgoing_message = TextMessage(to='remi',
+                                       body=ChooseFavoriteColorStrings.CONFIRMATION_CANCELLED.format(color='blue'),
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
         self.bot_call([incoming_message], [outgoing_message])
 
         user = BotUser.get_by_id('remi')
@@ -155,12 +159,10 @@ class ConfirmColorTest(BotTestBase):
                 states=[GenericState.type(), ConfirmColorState.type()],
                 state_data={ConfirmColorState.type(): {'color': 'blue'}}).put()
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'sure!'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': ChooseFavoriteColorStrings.CONFIRMED_COLOR.format(color='blue')
-        }
+        incoming_message = TextMessage(from_user='remi', body='sure!')
+        outgoing_message = TextMessage(to='remi',
+                                       body=ChooseFavoriteColorStrings.CONFIRMED_COLOR.format(color='blue'))
+
         self.bot_call([incoming_message], [outgoing_message])
 
         user = BotUser.get_by_id('remi')
@@ -172,13 +174,12 @@ class ConfirmColorTest(BotTestBase):
                 states=[ConfirmColorState.type(), AlwaysPoppingState.type()],
                 state_data={ConfirmColorState.type(): {'color': 'blue'}}).put()
 
-        incoming_message = {'type': MessageType.TEXT, 'from': 'remi', 'body': 'yolo'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': ChooseFavoriteColorStrings.CONFIRMATION_CONFUSED.format(color='blue'),
-            'suggestedResponses': ['Yes', 'No']
-        }
+        incoming_message = TextMessage(from_user='remi', body='yolo')
+        srs = [TextResponse(body=x) for x in ['Yes', 'No']]
+        outgoing_message = TextMessage(to='remi',
+                                       body=ChooseFavoriteColorStrings.CONFIRMATION_CONFUSED.format(color='blue'),
+                                       keyboards=[SuggestedResponseKeyboard(to='remi', responses=srs)])
+
         self.bot_call([incoming_message], [outgoing_message])
 
         user = BotUser.get_by_id('remi')

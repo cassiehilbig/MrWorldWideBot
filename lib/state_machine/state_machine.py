@@ -67,7 +67,8 @@ class StateMachine(object):
         user_next_state = self._get_user_current_state(user)
         if isinstance(user_next_state, KeywordState) and user_next_state.suggested_responses and messages:
             if not getattr(messages[-1], 'keyboards') and messages[-1].type not in MessageType.TRANSIENT:
-                messages[-1].keyboards = [SuggestedResponseKeyboard(responses=user_next_state.suggested_responses)]
+                messages[-1].keyboards = [SuggestedResponseKeyboard(to=messages[-1].to,
+                                                                    responses=user_next_state.suggested_responses)]
 
         self.persistence_strategy.put(username, user)
 
@@ -80,7 +81,6 @@ class StateMachine(object):
         """
         states = self.persistence_strategy.get_states(user)
         if isinstance(transition, PopTransition):
-            print "ihfisherfihersfhuiersfhiesuhrfhsuefuihfiruhef"
             states.pop()
 
             # We just made the user go to a state he used to be in. This state might need to be repaired

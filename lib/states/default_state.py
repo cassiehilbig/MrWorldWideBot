@@ -16,7 +16,7 @@ class DefaultState(State):
         return StateTypes.DEFAULT
 
     def on_message(self, message):
-        profile = UserApi.get(message['from'])
+        profile = UserApi.get(message.from_user)
         # bot_name=Config.BOT_USERNAME, bot_api_key=Config.BOT_API_KEY)
         m = DefaultStateStrings.WELCOME_MESSAGE.format(first_name=profile['firstName'])
         return Transition([TextMessage(to=self.user.id, body=m)], StateTypes.MENU)

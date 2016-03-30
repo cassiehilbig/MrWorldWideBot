@@ -1,11 +1,11 @@
-from kik.messages import MessageType
-from kik.state_machine import State
-
-from test.example_bot_test_base import ExampleBotTestBase
+from kik.messages.picture import PictureMessage
+from kik.messages.text import TextMessage
 from lib.bot_state_machine import state_machine
+from lib.state_machine import State
 from lib.states.picture.sent_picture_state import SentPictureStrings, SentPictureState
 from lib.states.state_types import StateTypes
-from model import BotUser
+from model.bot_user import BotUser
+from test.bot_test_base import BotTestBase
 
 
 class GenericState(State):
@@ -15,15 +15,15 @@ class GenericState(State):
         return 'foo'
 
 
-class PictureStateTest(ExampleBotTestBase):
+class PictureStateTest(BotTestBase):
 
     def setUp(self):
-        super(ExampleBotTestBase, self).setUp()
+        super(BotTestBase, self).setUp()
         self.old_states = state_machine._states
         state_machine.register_state(GenericState)
 
     def tearDown(self):
-        super(ExampleBotTestBase, self).tearDown()
+        super(BotTestBase, self).tearDown()
         state_machine._states = self.old_states
 
     def test_static(self):
@@ -32,12 +32,8 @@ class PictureStateTest(ExampleBotTestBase):
     def test_intercept(self):
         BotUser(id='remi', states=[GenericState.type()]).put()
 
-        incoming_message = {'type': MessageType.PICTURE, 'from': 'remi', 'picUrl': 'http://yolo'}
-        outgoing_message = {
-            'type': MessageType.TEXT,
-            'to': 'remi',
-            'body': SentPictureStrings.SENT_PICTURE_MESSAGE
-        }
+        incoming_message = PictureMessage(from_user='remi', pic_url='http://yolo')
+        outgoing_message = TextMessage(to='remi', body=SentPictureStrings.SENT_PICTURE_MESSAGE)
 
         self.bot_call([incoming_message], [outgoing_message])
 

@@ -1,4 +1,5 @@
 from kik.messages.text import TextMessage
+from kik.messages.responses import TextResponse
 from lib.state_machine import KeywordState, keyword_response, ConfirmationState, Transition, PopTransition,\
     LambdaTransition
 
@@ -30,14 +31,13 @@ class ChooseColorState(KeywordState):
         super(ChooseColorState, self).__init__(user)
 
         # We don't want to have too many functions, so let's add suggested responses dynamically
-        self.suggested_responses = COLORS + self.suggested_responses
+        self.suggested_responses = [TextResponse(body=x) for x in COLORS] + self.suggested_responses
 
-    @keyword_response('cancel', 'back')
+    @keyword_response('Cancel', 'back')
     def handle_cancel(self, message):
         return PopTransition([TextMessage(to=self.user.id, body=ChooseFavoriteColorStrings.CANCEL_MESSAGE)])
 
     def handle_unmatched(self, message):
-        print "handling umatched"
         if message.type != MessageType.TEXT:
             return LambdaTransition([TextMessage(to=self.user.id,
                                                  body=ChooseFavoriteColorStrings.UNKNOWN_MESSAGE_TYPE)])
