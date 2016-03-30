@@ -1,5 +1,5 @@
 from kik.messages.text import TextMessage
-from lib.kik import get_kik_api
+from lib.kik_api import get_kik_api
 from lib.state_machine import State, Transition
 from lib.states.state_types import StateTypes
 

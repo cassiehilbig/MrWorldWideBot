@@ -8,7 +8,7 @@ from flask import request
 from kik.messages import messages_from_json, TextMessage, PictureMessage, VideoMessage, LinkMessage, \
     StartChattingMessage, StickerMessage, ScanDataMessage
 from lib import logging
-from lib.kik import get_kik_api
+from lib.kik_api import get_kik_api
 from lib.bot_state_machine import state_machine
 from lib.decorators import require_params
 from lib.utils import partition, error_response
