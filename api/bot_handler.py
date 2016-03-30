@@ -20,7 +20,7 @@ ALLOWED_MESSAGE_TYPES = [TextMessage, PictureMessage, VideoMessage, LinkMessage,
 
 @app.route('/incoming', methods=['POST'])
 def receive():
-    if not kik.utils.verify_signature(request.headers.get('X-Kik-Signature'), request.data):
+    if not kik.utils.verify_signature(request.headers.get('X-Kik-Signature'), request.get_data()):
         return error_response(403, 'API signature incorrect')
 
     if not isinstance(request.args.get('messages'), list):
