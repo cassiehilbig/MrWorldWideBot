@@ -3,12 +3,16 @@ import sys
 from importlib import import_module
 from os import listdir, path
 
+from config import Config
+
 sys.path.insert(0, path.join(path.dirname(__file__), '.'))
 sys.path.insert(0, path.join(path.dirname(__file__), 'xlib'))
 
 from flask import Flask, request
+from kik import KikApi
 
 app = Flask(__name__)
+kik = KikApi(Config.BOT_USERNAME, Config.BOT_API_KEY)
 
 
 @app.before_request

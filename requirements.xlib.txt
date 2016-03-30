@@ -6,5 +6,5 @@ Jinja2==2.8
 MarkupSafe==0.23
 itsdangerous==0.24
 mixpanel==4.3.0
-kik==1.0.0a2
+kik==1.0.0a3
 six==1.10.0

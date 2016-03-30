@@ -12,12 +12,8 @@ from webtest import TestApp
 from app import app
 from test.testbed import Testbed
 
-os.environ['BOT_USERNAME'] = 'test_bot'
-os.environ['BOT_API_KEY'] = 'test_key'
-
 
 class TestBase(TestCase):
-    MODULE = 'default'
     MOCK_URL_FETCH = True
     ROOT_PATH = os.path.normpath(os.path.join(os.path.dirname(__file__), os.pardir))
 

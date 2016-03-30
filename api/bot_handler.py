@@ -1,14 +1,14 @@
 import json
 
-from flask import request
 from google.appengine.api import taskqueue
-from kik import KikApi
+
+from app import app, kik
+from config import Config
+from flask import request
 from kik.messages import messages_from_json, TextMessage, PictureMessage, VideoMessage, LinkMessage, \
     StartChattingMessage, StickerMessage, ScanDataMessage
-
-from app import app
-from config import Config
 from lib import logging
+from lib.bot_state_machine import state_machine
 from lib.decorators import require_params
 from lib.utils import partition, error_response
 
@@ -16,8 +16,6 @@ from lib.utils import partition, error_response
 # need to add them here
 ALLOWED_MESSAGE_TYPES = [TextMessage, PictureMessage, VideoMessage, LinkMessage, StartChattingMessage,
                          StickerMessage, ScanDataMessage]
-
-kik = KikApi(Config.BOT_USERNAME, Config.BOT_API_KEY)
 
 
 @app.route('/incoming', methods=['POST'])
@@ -53,11 +51,11 @@ def incoming():
         logging.debug('Dropping message mentioning another bot. Message is mentioning {}'.format(message.mention))
         return '', 200
 
+    outgoing_messages = state_machine.handle_message(message.from_user, message)
+
     logging.debug('Processing message: {}'.format(message))
 
-    if isinstance(message, TextMessage):
-        kik.message.send([TextMessage(to=message.from_user, chat_id=message.chat_id, body=message.body)])
-    else:
-        kik.message.send([TextMessage(to=message.from_user, chat_id=message.chat_id, body='I\'m just an example bot')])
+    if len(outgoing_messages) > 0:
+        kik.message.send(outgoing_messages)
 
     return '', 200
