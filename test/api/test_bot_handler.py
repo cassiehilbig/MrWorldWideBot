@@ -119,7 +119,7 @@ class IncomingMessageTaskTest(TestBase):
     def test_no_message_param_silent_failure_if_task(self):
         self.api_call('post', '/tasks/incoming', headers=self.headers, status=200)
 
-    @mock.patch('kik.api.MessageApi.send')
+    @mock.patch('kik.KikApi.send_messages')
     def test_not_allowed_type(self, send_messages):
         self.api_call('post', '/tasks/incoming', data={
             'message': {'type': 'unknown-type'}
@@ -127,7 +127,7 @@ class IncomingMessageTaskTest(TestBase):
 
         self.assertEqual(send_messages.call_count, 0)
 
-    @mock.patch('kik.api.MessageApi.send')
+    @mock.patch('kik.KikApi.send_messages')
     def test_mentioning_another_bot(self, send_messages):
         self.api_call('post', '/tasks/incoming', data={
             'message': {'type': 'text', 'from': 'foobar', 'mention': 'anotherbot'}

@@ -4,6 +4,7 @@ import json
 
 import mock
 
+from app import kik
 from config import Config
 from lib.utils import generate_signature
 from test.test_base import TestBase
@@ -13,7 +14,7 @@ class BotTestBase(TestBase):
     @classmethod
     def setUpClass(cls):
         super(BotTestBase, cls).setUpClass()
-        cls.send_messages_location = 'kik.api.MessageApi.send'
+        cls.send_messages_location = 'kik.KikApi.send_messages'
         cls.api_route = '/incoming'
 
     def setUp(self):
@@ -31,7 +32,7 @@ class BotTestBase(TestBase):
             }
 
             if auto_generate_signature:
-                if Config.BOT_API_KEY is None:
+                if kik.api_key is None:
                     raise AssertionError('Can\'t generate signature without bot api key.')
                 headers['X-Kik-Signature'] = generate_signature(Config.BOT_API_KEY, post_data)
 
