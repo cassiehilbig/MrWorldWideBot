@@ -20,7 +20,7 @@ ALLOWED_MESSAGE_TYPES = [TextMessage, PictureMessage, VideoMessage, LinkMessage,
 
 @app.route('/incoming', methods=['POST'])
 def receive():
-    if not kik.utils.verify_signature(request.headers.get('X-Kik-Signature'), request.get_data()):
+    if not kik.verify_signature(request.headers.get('X-Kik-Signature'), request.get_data()):
         return error_response(403, 'API signature incorrect')
 
     if not isinstance(request.args.get('messages'), list):
@@ -56,6 +56,6 @@ def incoming():
     logging.debug('Processing message: {}'.format(message))
 
     if len(outgoing_messages) > 0:
-        kik.message.send(outgoing_messages)
+        kik.send_messages(outgoing_messages)
 
     return '', 200

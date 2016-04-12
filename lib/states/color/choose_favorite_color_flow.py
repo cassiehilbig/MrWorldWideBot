@@ -1,5 +1,5 @@
-from kik.messages.responses import TextResponse
-from kik.messages.text import TextMessage
+from kik.messages import TextResponse, TextMessage
+
 from lib.message_types import MessageType
 from lib.state_machine import KeywordState, keyword_response, ConfirmationState, Transition, PopTransition,\
     LambdaTransition

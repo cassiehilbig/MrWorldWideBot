@@ -1,13 +1,13 @@
 import mock
 
-from kik.messages.keyboards import SuggestedResponseKeyboard
-from kik.messages.responses import TextResponse
-from kik.messages.text import TextMessage
+import kik
+from kik.messages import SuggestedResponseKeyboard, TextResponse, TextMessage
+
+from test.bot_test_base import BotTestBase
 from lib.states.default_state import DefaultState, DefaultStateStrings
 from lib.states.menu_state import MenuState
 from lib.states.state_types import StateTypes
 from model.bot_user import BotUser
-from test.bot_test_base import BotTestBase
 
 
 class MenuStateTest(BotTestBase):
@@ -15,7 +15,7 @@ class MenuStateTest(BotTestBase):
     def test_static(self):
         self.assertEqual(DefaultState.type(), StateTypes.DEFAULT)
 
-    @mock.patch('kik.api.UserApi.get', return_value={'firstName': 'Rems'})
+    @mock.patch('kik.KikApi.get_user', return_value=kik.User(first_name='Rems', last_name='Stinks'))
     def test_stack_not_existing_user(self, get_user_profile):
         incoming_message = TextMessage(from_user='remi', body='Hello are you from my school?')
         srs = [TextResponse(body=x) for x in ['Color', 'Do nothing']]
@@ -26,7 +26,7 @@ class MenuStateTest(BotTestBase):
 
         self.assertEqual(BotUser.get_by_id('remi').states, [MenuState.type()])
 
-    @mock.patch('kik.api.UserApi.get', return_value={'firstName': 'Rems'})
+    @mock.patch('kik.KikApi.get_user', return_value=kik.User(first_name='Rems', last_name='Stinks'))
     def test_stack_existing_user(self, get_user_profile):
         BotUser(id='remi').put()
 

@@ -1,6 +1,6 @@
-from kik.messages.text import TextMessage
-from lib.state_machine import KeywordState, keyword_response, LambdaTransition, StackTransition
+from kik.messages import TextMessage
 
+from lib.state_machine import KeywordState, keyword_response, LambdaTransition, StackTransition
 from lib.states.state_types import StateTypes
 
 
