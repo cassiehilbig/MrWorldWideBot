@@ -2,6 +2,8 @@ import json
 
 from google.appengine.api import taskqueue
 
+import gizoogleshit
+import getTranslation
 from app import app, kik
 from config import Config
 from flask import request
@@ -11,6 +13,8 @@ from lib import logging
 from lib.bot_state_machine import state_machine
 from lib.decorators import require_params
 from lib.utils import partition, error_response
+
+from model.bot_user import BotUser
 
 # Message types that should be processed. If you choose to respond to other message types, you will
 # need to add them here
@@ -51,7 +55,21 @@ def incoming():
         logging.debug('Dropping message mentioning another bot. Message is mentioning {}'.format(message.mention))
         return '', 200
 
-    outgoing_messages = state_machine.handle_message(message.from_user, message)
+    user = BotUser.get_by_id(message.from_user)
+
+    if message.mention:
+        # handle the case where we're mentioned inline
+        if message.body == '':
+            translated = "What do you want translated?"
+        elif user.current_state_data()['language'] is None:
+            translated = gizoogleshit.gizoogleit(message.body)
+        elif user.current_state_data()['language'] == "thug":
+            translated = gizoogleshit.gizoogleit(message.body)
+        else:
+            translated = getTranslation.translateshit(user.current_state_data()['language'], message.body)
+        outgoing_messages = [TextMessage(to=message.from_user, body=translated, chat_id=message.chat_id)]
+    else:
+        outgoing_messages = state_machine.handle_message(message.from_user, message)
 
     logging.debug('Processing message: {}'.format(message))
 

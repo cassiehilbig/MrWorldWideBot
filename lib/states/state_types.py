@@ -10,3 +10,5 @@ class StateTypes(object):
     SENT_PICTURE = 'sent-picture'
     GENERIC = 'foo'
     ALWAYS_POPPING = 'pop'
+    CHOOSE_LANGUAGE = 'choose-language'
+    INPUT_TEXT_TOTRANSLATE = 'input-text-totranslate'

@@ -6,7 +6,7 @@ from lib.states.state_types import StateTypes
 
 
 class DefaultStateStrings(object):
-    WELCOME_MESSAGE = 'Welcome, {first_name}!'
+    WELCOME_MESSAGE = 'Welcome to my hood, {first_name}! To get started, choose a language to translate to. If you want to switch languages later, tap "Choose Language"'
 
 
 class DefaultState(State):

@@ -45,6 +45,7 @@ class KeywordState(State):
     def __init__(self, *args, **kwargs):
         super(KeywordState, self).__init__(*args, **kwargs)
         self.keyword_responses = []
+        self.hide_keyboard = False
 
         # Have to climb the inheritance hierarchy for the instance to make sure we get all keyword responses.
         inspect_class = self.__class__
@@ -55,7 +56,7 @@ class KeywordState(State):
             inspect_class = inspect_class.__bases__[0]
 
         self.keyword_responses.sort(key=lambda sr: sr.order)
-        if len(self.keyword_responses) <= 7:
+        if len(self.keyword_responses) <= 20:
             self.suggested_responses = [TextResponse(body=kw.keyword)for kw in self.keyword_responses]
         else:
             self.suggested_responses = None

@@ -6,3 +6,4 @@ multitest==0.1.2
 Fabric==1.10.2
 freezegun==0.3.3
 webtest==2.0.18
+bs4

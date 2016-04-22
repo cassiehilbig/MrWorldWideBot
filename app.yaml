@@ -16,9 +16,9 @@ handlers:
   script: app.app
 
 env_variables:
-  BOT_USERNAME: ''
-  BOT_API_KEY: ''
-  MIXPANEL_TOKEN: ''
+  BOT_USERNAME: 'mrworldwidebot'
+  BOT_API_KEY: '0a4ca262-4274-424f-ab9e-4666e0d0751b'
+  MIXPANEL_TOKEN: 'asd'
 
 libraries:
 - name: ssl

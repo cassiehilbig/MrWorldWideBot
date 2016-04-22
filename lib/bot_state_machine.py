@@ -2,7 +2,7 @@ from lib.state_machine import StateMachine, PersistenceStrategy
 
 from model.bot_user import BotUser
 from states import DefaultState, MenuState, ChooseColorState, ConfirmColorState, picture_interceptor, \
-    SentPictureState, GenericState, AlwaysPoppingState
+    SentPictureState, GenericState, AlwaysPoppingState, TranslateLanguageState, ChooseLanguageState
 
 
 class BotUserPersistenceStrategy(PersistenceStrategy):
@@ -29,3 +29,5 @@ state_machine.register_state(ConfirmColorState)
 state_machine.register_state(SentPictureState)
 state_machine.register_state(GenericState)
 state_machine.register_state(AlwaysPoppingState)
+state_machine.register_state(ChooseLanguageState)
+state_machine.register_state(TranslateLanguageState)

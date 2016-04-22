@@ -68,7 +68,8 @@ class StateMachine(object):
         if isinstance(user_next_state, KeywordState) and user_next_state.suggested_responses and messages:
             if not getattr(messages[-1], 'keyboards') and messages[-1].type not in MessageType.TRANSIENT:
                 messages[-1].keyboards = [SuggestedResponseKeyboard(to=messages[-1].to,
-                                                                    responses=user_next_state.suggested_responses)]
+                                                                    responses=user_next_state.suggested_responses,
+                                                                    hidden=user_next_state.hide_keyboard)]
 
         self.persistence_strategy.put(username, user)
 

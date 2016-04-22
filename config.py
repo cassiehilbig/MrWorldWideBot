@@ -1,4 +1,7 @@
 import os
+import json
+import requests
+
 
 
 class Config(object):
@@ -8,6 +11,6 @@ class Config(object):
     # Taskqueues can't take more than 100KB, this is a little smaller to allow for headers
     TASKQUEUE_MAX_LENGTH = 90 * 1024
 
-    BOT_USERNAME = os.environ.get('BOT_USERNAME', 'TOTALLY_VALID_TEST_USERNAME_TO_PASS_CONDITIONS')
-    BOT_API_KEY = os.environ.get('BOT_API_KEY', 'TOTALLY_VALID_TEST_API_KEY_TO_PASS_CONDITIONS')
+    BOT_USERNAME = os.environ.get('BOT_USERNAME', 'mrworldwidebot')
+    BOT_API_KEY = os.environ.get('BOT_API_KEY', '0a4ca262-4274-424f-ab9e-4666e0d0751b')
     MIXPANEL_TOKEN = os.environ.get('MIXPANEL_TOKEN')
